@@ -1,0 +1,85 @@
+/* === Theme === */
+:root {
+  --pink: #ff2bd6;
+  --cyan: #00f0ff;
+  --yellow: #fff200;
+  --green: #39ff14;
+  --orange: #ff7a00;
+  --gold: #ffd24a;
+  --eggplant: #b346c8;
+  --bg-deep: #07000f;
+  --bg-mid: #160028;
+  --bg-top: #2a0050;
+
+  --beat-ms: 250ms; /* updated by JS based on BPM */
+
+  --font-display: 'Courier New', ui-monospace, monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+body {
+  background: radial-gradient(ellipse at top, var(--bg-top) 0%, var(--bg-mid) 35%, var(--bg-deep) 100%);
+  color: #fff;
+  font-family: var(--font-display);
+  overflow-x: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+input[type='range'] {
+  accent-color: var(--pink);
+  cursor: pointer;
+}
+
+/* shared header style */
+.app-header {
+  text-align: center;
+  padding: 14px 12px 4px;
+}
+.app-title {
+  font-size: clamp(28px, 6vw, 56px);
+  font-weight: 900;
+  letter-spacing: 6px;
+  margin: 0;
+  background: linear-gradient(90deg, var(--pink), var(--yellow), var(--cyan), var(--green), var(--pink));
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: titleShine 6s linear infinite;
+  filter: drop-shadow(0 0 14px rgba(255, 43, 214, 0.4));
+}
+.app-subtitle {
+  font-size: 11px;
+  letter-spacing: 4px;
+  opacity: 0.7;
+  color: var(--cyan);
+  margin-top: 2px;
+}
+@keyframes titleShine { to { background-position: 200% center; } }
+
+.app-footer {
+  text-align: center;
+  padding: 16px;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: rgba(255, 255, 255, 0.45);
+}
+.app-footer a { color: var(--pink); text-decoration: none; }
