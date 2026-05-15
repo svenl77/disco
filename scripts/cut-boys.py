@@ -22,19 +22,18 @@ from PIL import Image
 from huggingface_hub import hf_hub_download
 
 ROOT = Path(__file__).resolve().parent.parent
-SOURCE = ROOT / "assets" / "boys" / "HINvzyuW4AAFF4b.jpeg"  # $DISCO promo, club background
+SOURCE = ROOT / "assets" / "boys" / "image.png"  # Clean line-up, 1536x1024, dark gradient bg
 OUT_DIR = ROOT / "public" / "boys"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
-# Bounding boxes for the 1200x800 $DISCO promo image.
-# Background is a dark disco club — RMBG-1.4 handles this much better than the
-# garden in the bocce image (~30-50% foreground vs ~85%).
+# Bounding boxes for the 1536x1024 clean line-up image.
+# Each boy is clearly separated; dark background is easy for RMBG to remove.
 BOYS: list[tuple[str, tuple[int, int, int, int]]] = [
-    ("pepe",     (50,  155, 320, 545)),
-    ("eggplant", (290, 130, 525, 565)),
-    ("maus",     (530, 130, 760, 460)),
-    ("burns",    (705, 165, 895, 585)),
-    ("hippie",   (915, 130, 1170, 580)),
+    ("pepe",     (80,   90, 380, 980)),
+    ("eggplant", (380,  60, 670, 990)),
+    ("maus",     (700, 100, 880, 990)),
+    ("burns",    (920, 100, 1170, 990)),
+    ("hippie",   (1190, 50, 1530, 990)),
 ]
 
 MODEL_INPUT = 1024  # RMBG-1.4 expects 1024x1024
