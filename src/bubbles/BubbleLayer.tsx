@@ -9,7 +9,7 @@
  *    of the line is unambiguous
  */
 import { For, createSignal, onCleanup, createEffect, on } from 'solid-js';
-import { isPlaying, barCount, mood, lastDrop } from '../state';
+import { isPlaying, barCount, mood, lastDrop, lastBoyAction } from '../state';
 import { BOYS } from '../boys/boys-data';
 import { pickSprueche, type BoyId, type Mood as SpruchMood } from './sprueche';
 import './bubbles.css';
@@ -71,6 +71,16 @@ export function BubbleLayer() {
       if (!playing) return;
       const boy = BOYS[Math.floor(Math.random() * BOYS.length)];
       setTimeout(() => add(boy.id as BoyId, 'start'), 400);
+    }),
+  );
+
+  // On per-boy click: burst N bubbles from that specific boy
+  createEffect(
+    on(lastBoyAction, (action) => {
+      if (!action) return;
+      for (let i = 0; i < action.bubbles; i++) {
+        setTimeout(() => add(action.boyId as BoyId, action.mood), i * 180);
+      }
     }),
   );
 

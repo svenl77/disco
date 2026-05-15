@@ -17,11 +17,11 @@
  * the disco ball, and the ball scatters white reflective spots in all
  * directions — the way a real disco room works.
  */
-import { For } from 'solid-js';
+import { For, createSignal, createEffect, on } from 'solid-js';
 import { DiscoBall } from './DiscoBall';
 import { Boys } from '../boys/Boys';
 import { BubbleLayer } from '../bubbles/BubbleLayer';
-import { mood } from '../state';
+import { mood, lastBoyAction } from '../state';
 import './stage.css';
 
 // 32 reflective light spots arranged in a ring around the disco ball
@@ -39,8 +39,24 @@ function spotStyle(i: number) {
 }
 
 export function Stage() {
+  // Track which boy was last clicked so we can flash the stage in their colour briefly
+  const [activeBoy, setActiveBoy] = createSignal<string | null>(null);
+  createEffect(
+    on(lastBoyAction, (action) => {
+      if (!action) return;
+      setActiveBoy(action.boyId);
+      setTimeout(() => setActiveBoy((cur) => (cur === action.boyId ? null : cur)), 700);
+    }),
+  );
+
   return (
-    <section class="stage" aria-label="Boys Club Disco stage" data-mood={mood()}>
+    <section
+      class="stage"
+      aria-label="Boys Club Disco stage"
+      data-mood={mood()}
+      data-active-boy={activeBoy() ?? undefined}
+      style={{ '--flash-color': lastBoyAction()?.flash ?? 'transparent' }}
+    >
       {/* Back wall + ceiling */}
       <div class="room-back" />
 

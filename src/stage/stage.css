@@ -23,6 +23,37 @@
 .stage[data-mood='drop'] { filter: brightness(1.25) saturate(1.3); }
 .stage[data-mood='hype'] { filter: brightness(1.1); }
 
+/* When a boy is clicked: full-stage radial flash in their colour */
+.stage[data-active-boy]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9;
+  background: radial-gradient(circle at 50% 50%,
+    color-mix(in srgb, var(--flash-color) 25%, transparent) 0%,
+    transparent 60%);
+  animation: stageFlash 0.7s ease-out forwards;
+}
+@keyframes stageFlash {
+  0%   { opacity: 0; }
+  20%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* The clicked boy itself gets a coloured glow ring */
+.stage[data-active-boy='pepe']     .boy[data-id='pepe'],
+.stage[data-active-boy='eggplant'] .boy[data-id='eggplant'],
+.stage[data-active-boy='maus']     .boy[data-id='maus'],
+.stage[data-active-boy='burns']    .boy[data-id='burns'],
+.stage[data-active-boy='landwulf'] .boy[data-id='landwulf'] {
+  filter:
+    drop-shadow(0 0 12px var(--boy-color))
+    drop-shadow(0 0 24px var(--boy-color))
+    drop-shadow(0 0 36px var(--boy-color))
+    brightness(1.1);
+}
+
 /* === BACK WALL + CEILING === */
 .room-back {
   position: absolute;

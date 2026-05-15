@@ -22,19 +22,19 @@ from PIL import Image
 from huggingface_hub import hf_hub_download
 
 ROOT = Path(__file__).resolve().parent.parent
-SOURCE = ROOT / "assets" / "boys" / "lineup-v2.png"  # Clean line-up v2, 1536x1024, full bodies
+SOURCE = ROOT / "assets" / "boys" / "lineup-v1.png"  # First clean line-up, well-spaced
 OUT_DIR = ROOT / "public" / "boys"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
-# Bounding boxes for the 1536x1024 line-up v2.
-# Note: "landwulf" replaces the old "hippie" id — the orange-bearded character
-# is Landwolf from the original Boys Club comic by Matt Furie.
+# Bounding boxes for the 1536x1024 line-up v1.
+# Boys are well-spaced here — pick generous bboxes that don't quite reach
+# into the neighbor's silhouette.
 BOYS: list[tuple[str, tuple[int, int, int, int]]] = [
-    ("pepe",     (50,  60,  370, 990)),
-    ("eggplant", (320, 50,  640, 1010)),
-    ("maus",     (610, 80,  870, 990)),
-    ("burns",    (860, 90,  1170, 990)),
-    ("landwulf", (1140, 60, 1510, 990)),
+    ("pepe",     (60,   80,  380, 990)),
+    ("eggplant", (390,  50,  680, 1010)),
+    ("maus",     (735,  100, 905, 990)),
+    ("burns",    (935,  90,  1210, 990)),
+    ("landwulf", (1240, 60,  1520, 990)),
 ]
 
 MODEL_INPUT = 1024  # RMBG-1.4 expects 1024x1024
@@ -77,6 +77,57 @@ def remove_bg(session: ort.InferenceSession, crop: Image.Image) -> Image.Image:
     return Image.fromarray(rgba, "RGBA")
 
 
+def keep_largest_blob(img: Image.Image, alpha_threshold: int = 32) -> Image.Image:
+    """Keep only the single largest connected region of alpha. Drops orphan
+    slivers (a neighboring boy's shoulder, a stray detail) which are smaller
+    disconnected blobs. Implemented as a simple flood-fill BFS."""
+    arr = np.array(img)
+    alpha = arr[..., 3]
+    h, w = alpha.shape
+    mask = alpha > alpha_threshold
+    if not mask.any():
+        return img
+
+    visited = np.zeros_like(mask, dtype=bool)
+    best_size = 0
+    best_blob: list[tuple[int, int]] | None = None
+
+    # Use scipy if available for speed; otherwise a simple BFS
+    try:
+        from scipy import ndimage
+        labels, n = ndimage.label(mask)
+        if n == 0:
+            return img
+        sizes = ndimage.sum(mask, labels, range(1, n + 1))
+        biggest_label = int(np.argmax(sizes)) + 1
+        keep = labels == biggest_label
+    except ImportError:
+        # Manual BFS fallback (slow but works)
+        keep = np.zeros_like(mask, dtype=bool)
+        for sy in range(h):
+            for sx in range(w):
+                if not mask[sy, sx] or visited[sy, sx]:
+                    continue
+                stack = [(sy, sx)]
+                blob: list[tuple[int, int]] = []
+                while stack:
+                    y, x = stack.pop()
+                    if y < 0 or x < 0 or y >= h or x >= w: continue
+                    if visited[y, x] or not mask[y, x]: continue
+                    visited[y, x] = True
+                    blob.append((y, x))
+                    stack.extend([(y+1, x), (y-1, x), (y, x+1), (y, x-1)])
+                if len(blob) > best_size:
+                    best_size = len(blob)
+                    best_blob = blob
+        if best_blob:
+            for (y, x) in best_blob:
+                keep[y, x] = True
+
+    arr[..., 3] = np.where(keep, alpha, 0)
+    return Image.fromarray(arr, "RGBA")
+
+
 def tight_crop(img: Image.Image, alpha_threshold: int = 8) -> Image.Image:
     """Crop transparent borders away — keep a small breathing margin."""
     arr = np.array(img)
@@ -107,6 +158,7 @@ def main() -> int:
         print(f"\n— {boy_id}  bbox={bbox}")
         crop = src.crop(bbox)
         cut = remove_bg(session, crop)
+        cut = keep_largest_blob(cut)
         cut = tight_crop(cut)
         out_path = OUT_DIR / f"{boy_id}.png"
         cut.save(out_path, optimize=True)

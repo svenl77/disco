@@ -69,6 +69,62 @@ export async function triggerDrop(): Promise<void> {
   setTimeout(() => setMood('groove'), 4000);
 }
 
+/* === Per-boy click actions === */
+export type BoyAction = {
+  boyId: string;
+  ts: number;
+  /** Spruche pool flavour: drop / hype / idle / etc. */
+  mood: 'drop' | 'hype' | 'idle' | 'acid' | 'start';
+  /** How many bubbles to emit for this boy on click */
+  bubbles: number;
+  /** Visual flash color for the stage */
+  flash: string;
+};
+export const [lastBoyAction, setLastBoyAction] = createSignal<BoyAction | null>(null);
+
+export async function triggerBoyAction(boyId: string): Promise<void> {
+  await audio.init();
+  audio.setMaster(volume() * volume());
+  audio.setFilter(filter());
+  audio.setReverb(reverb() * 0.7);
+
+  let action: BoyAction;
+  switch (boyId) {
+    case 'eggplant': // $DISCO — the DJ — triggers a full drop
+      audio.drop();
+      setLastDrop(performance.now());
+      setMood('drop');
+      setTimeout(() => setMood(acidMode() ? 'acid' : 'hype'), 1700);
+      setTimeout(() => setMood('groove'), 4000);
+      action = { boyId, ts: performance.now(), mood: 'drop', bubbles: 3, flash: '#ff2bd6' };
+      break;
+
+    case 'pepe': // KEKEKEK + green flash
+      audio.pepeKek();
+      action = { boyId, ts: performance.now(), mood: 'hype', bubbles: 4, flash: '#39ff14' };
+      break;
+
+    case 'maus': // Thoughtful piano + "interesting"
+      audio.mausPiano();
+      action = { boyId, ts: performance.now(), mood: 'idle', bubbles: 2, flash: '#7aa3ff' };
+      break;
+
+    case 'burns': // Glass clink + "excellent"
+      audio.burnsClink();
+      action = { boyId, ts: performance.now(), mood: 'hype', bubbles: 2, flash: '#ffd24a' };
+      break;
+
+    case 'landwulf': // Howl + peace vibes
+      audio.landwulfHowl();
+      action = { boyId, ts: performance.now(), mood: 'acid', bubbles: 3, flash: '#ff7a00' };
+      break;
+
+    default:
+      return;
+  }
+  setLastBoyAction(action);
+}
+
 export function setBpmValue(v: number): void {
   setBpm(v);
   seq.setBPM(v);

@@ -12,7 +12,7 @@
  */
 import { For } from 'solid-js';
 import { BOYS, boyImage, type Zone } from './boys-data';
-import { triggerDrop } from '../state';
+import { triggerBoyAction } from '../state';
 import './boys.css';
 
 const ZONE_CONFIG: Record<Zone, {
@@ -50,7 +50,7 @@ function Boy(props: { boy: (typeof BOYS)[number] }) {
 
   function onClick(e: MouseEvent) {
     e.preventDefault();
-    void triggerDrop();
+    void triggerBoyAction(props.boy.id);
     const el = e.currentTarget as HTMLElement;
     el.classList.remove('pop');
     void el.offsetWidth;

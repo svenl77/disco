@@ -358,6 +358,126 @@ export class AudioEngine {
     }
   }
 
+  /** Pepe — rapid "kekekek" stutter via gated square pulses */
+  pepeKek(t?: number): void {
+    const c = this.ctx!;
+    const start = t ?? c.currentTime;
+    for (let i = 0; i < 6; i++) {
+      const o = c.createOscillator();
+      o.type = 'square';
+      o.frequency.value = 380 + i * 30;
+      const g = c.createGain();
+      const at = start + i * 0.08;
+      g.gain.setValueAtTime(0, at);
+      g.gain.linearRampToValueAtTime(0.35, at + 0.005);
+      g.gain.exponentialRampToValueAtTime(0.001, at + 0.05);
+      const hp = c.createBiquadFilter();
+      hp.type = 'highpass';
+      hp.frequency.value = 200;
+      o.connect(hp).connect(g).connect(this.fxOut);
+      o.start(at);
+      o.stop(at + 0.06);
+    }
+  }
+
+  /** Maus — thoughtful jazzy 3-note piano arpeggio (Cmaj7 vibe) */
+  mausPiano(t?: number): void {
+    const c = this.ctx!;
+    const start = t ?? c.currentTime;
+    const notes = [261.63, 329.63, 392.0, 493.88]; // C4 E4 G4 B4
+    notes.forEach((freq, i) => {
+      const o = c.createOscillator();
+      o.type = 'triangle';
+      o.frequency.value = freq;
+      const o2 = c.createOscillator();
+      o2.type = 'sine';
+      o2.frequency.value = freq * 2;
+      const g = c.createGain();
+      const at = start + i * 0.09;
+      g.gain.setValueAtTime(0, at);
+      g.gain.linearRampToValueAtTime(0.22, at + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.001, at + 0.4);
+      o.connect(g);
+      const g2 = c.createGain();
+      g2.gain.value = 0.05;
+      o2.connect(g2).connect(g);
+      g.connect(this.fxOut);
+      o.start(at);
+      o2.start(at);
+      o.stop(at + 0.45);
+      o2.stop(at + 0.45);
+    });
+  }
+
+  /** Burns — crisp glass clink (high sine + brief noise) */
+  burnsClink(t?: number): void {
+    const c = this.ctx!;
+    const start = t ?? c.currentTime;
+    // Crystal ping
+    const o = c.createOscillator();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(2400, start);
+    o.frequency.exponentialRampToValueAtTime(1800, start + 0.18);
+    const g = c.createGain();
+    g.gain.setValueAtTime(0, start);
+    g.gain.linearRampToValueAtTime(0.35, start + 0.002);
+    g.gain.exponentialRampToValueAtTime(0.001, start + 0.35);
+    o.connect(g).connect(this.fxOut);
+    o.start(start);
+    o.stop(start + 0.4);
+    // Tiny shimmer noise
+    const n = this.noiseSrc();
+    const bp = c.createBiquadFilter();
+    bp.type = 'bandpass';
+    bp.frequency.value = 6000;
+    bp.Q.value = 3;
+    const ng = c.createGain();
+    ng.gain.setValueAtTime(0.2, start);
+    ng.gain.exponentialRampToValueAtTime(0.001, start + 0.15);
+    n.connect(bp).connect(ng).connect(this.fxOut);
+    n.start(start, 0);
+    n.stop(start + 0.2);
+  }
+
+  /** Landwulf — filtered noise sweep from low to high, like a wolf howl */
+  landwulfHowl(t?: number): void {
+    const c = this.ctx!;
+    const start = t ?? c.currentTime;
+    // Pitched howl via sine + heavy filter sweep
+    const o = c.createOscillator();
+    o.type = 'sawtooth';
+    o.frequency.setValueAtTime(180, start);
+    o.frequency.exponentialRampToValueAtTime(420, start + 0.4);
+    o.frequency.exponentialRampToValueAtTime(280, start + 0.9);
+    const lp = c.createBiquadFilter();
+    lp.type = 'lowpass';
+    lp.Q.value = 8;
+    lp.frequency.setValueAtTime(600, start);
+    lp.frequency.exponentialRampToValueAtTime(3000, start + 0.4);
+    lp.frequency.exponentialRampToValueAtTime(1200, start + 0.9);
+    const g = c.createGain();
+    g.gain.setValueAtTime(0, start);
+    g.gain.linearRampToValueAtTime(0.32, start + 0.06);
+    g.gain.linearRampToValueAtTime(0.28, start + 0.6);
+    g.gain.exponentialRampToValueAtTime(0.001, start + 0.95);
+    o.connect(lp).connect(g).connect(this.fxOut);
+    o.start(start);
+    o.stop(start + 1);
+    // Air noise overlay
+    const n = this.noiseSrc();
+    const nf = c.createBiquadFilter();
+    nf.type = 'bandpass';
+    nf.frequency.value = 1200;
+    nf.Q.value = 2;
+    const ng = c.createGain();
+    ng.gain.setValueAtTime(0.05, start);
+    ng.gain.linearRampToValueAtTime(0.10, start + 0.5);
+    ng.gain.exponentialRampToValueAtTime(0.001, start + 0.95);
+    n.connect(nf).connect(ng).connect(this.fxOut);
+    n.start(start, 0);
+    n.stop(start + 1);
+  }
+
   drop(): number {
     const c = this.ctx!;
     const start = c.currentTime;
