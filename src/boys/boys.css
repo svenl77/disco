@@ -37,6 +37,24 @@
   --boy-color: #fff;
 }
 
+/* Soft elliptical shadow under each boy — sits on the perspective floor */
+.boy::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%) translateZ(0);
+  width: 80%;
+  height: 14px;
+  background: radial-gradient(ellipse at center,
+    rgba(0, 0, 0, 0.55) 0%,
+    rgba(0, 0, 0, 0.35) 40%,
+    transparent 70%);
+  filter: blur(4px);
+  z-index: -1;
+  pointer-events: none;
+}
+
 .boy svg,
 .boy img {
   display: block;
@@ -69,40 +87,42 @@
   animation: boyPop 0.5s ease-out !important;
 }
 
-/* Five different dance choreographies */
+/* Five distinct dance choreographies — translateY + rotate only.
+   No scaleX flip: linear interpolation between scaleX(1) and scaleX(-1) passes
+   through scaleX(0) which makes the boy momentarily invisible/streaky. */
 @keyframes danceA {
-  0%   { transform: translateY(0)     rotate(-6deg) scaleX(1); }
-  25%  { transform: translateY(-14px) rotate(8deg)  scaleX(1); }
-  50%  { transform: translateY(-2px)  rotate(-4deg) scaleX(-1); }
-  75%  { transform: translateY(-12px) rotate(6deg)  scaleX(-1); }
-  100% { transform: translateY(0)     rotate(-6deg) scaleX(1); }
+  0%   { transform: translateY(0)     rotate(-6deg); }
+  25%  { transform: translateY(-14px) rotate(8deg); }
+  50%  { transform: translateY(-2px)  rotate(-4deg); }
+  75%  { transform: translateY(-12px) rotate(6deg); }
+  100% { transform: translateY(0)     rotate(-6deg); }
 }
 @keyframes danceB {
-  0%   { transform: translateY(-10px) rotate(-8deg) scaleX(-1); }
-  25%  { transform: translateY(0)     rotate(6deg)  scaleX(-1); }
-  50%  { transform: translateY(-16px) rotate(-10deg) scaleX(1); }
-  75%  { transform: translateY(-2px)  rotate(8deg)  scaleX(1); }
-  100% { transform: translateY(-10px) rotate(-8deg) scaleX(-1); }
+  0%   { transform: translateY(-10px) rotate(-8deg); }
+  25%  { transform: translateY(0)     rotate(6deg); }
+  50%  { transform: translateY(-16px) rotate(-10deg); }
+  75%  { transform: translateY(-2px)  rotate(8deg); }
+  100% { transform: translateY(-10px) rotate(-8deg); }
 }
 @keyframes danceC {
-  0%   { transform: translateY(0)     rotate(-7deg) scaleX(1); }
-  20%  { transform: translateY(-18px) rotate(10deg) scaleX(1); }
-  40%  { transform: translateY(-4px)  rotate(-5deg) scaleX(-1); }
-  55%  { transform: translateY(-22px) rotate(0deg)  scaleX(-1) scaleY(0.96); }
-  75%  { transform: translateY(-6px)  rotate(6deg)  scaleX(-1); }
-  100% { transform: translateY(0)     rotate(-7deg) scaleX(1); }
+  0%   { transform: translateY(0)     rotate(-7deg); }
+  20%  { transform: translateY(-18px) rotate(10deg); }
+  40%  { transform: translateY(-4px)  rotate(-5deg); }
+  55%  { transform: translateY(-22px) rotate(0deg) scaleY(0.94); }
+  75%  { transform: translateY(-6px)  rotate(6deg); }
+  100% { transform: translateY(0)     rotate(-7deg); }
 }
 @keyframes danceD {
-  0%   { transform: translateY(-4px)  rotate(4deg) scaleX(1); }
-  33%  { transform: translateY(-12px) rotate(-8deg) scaleX(1); }
-  66%  { transform: translateY(0)     rotate(10deg) scaleX(-1); }
-  100% { transform: translateY(-4px)  rotate(4deg) scaleX(1); }
+  0%   { transform: translateY(-4px)  rotate(4deg); }
+  33%  { transform: translateY(-12px) rotate(-8deg); }
+  66%  { transform: translateY(0)     rotate(10deg); }
+  100% { transform: translateY(-4px)  rotate(4deg); }
 }
 @keyframes danceE {
-  0%   { transform: translateY(-8px) rotate(6deg) scaleX(-1); }
-  30%  { transform: translateY(-2px) rotate(-10deg) scaleX(-1); }
-  60%  { transform: translateY(-16px) rotate(8deg) scaleX(1); }
-  100% { transform: translateY(-8px) rotate(6deg) scaleX(-1); }
+  0%   { transform: translateY(-8px) rotate(6deg); }
+  30%  { transform: translateY(-2px) rotate(-10deg); }
+  60%  { transform: translateY(-16px) rotate(8deg); }
+  100% { transform: translateY(-8px) rotate(6deg); }
 }
 
 @keyframes boyPop {

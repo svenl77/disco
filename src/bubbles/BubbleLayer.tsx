@@ -1,13 +1,12 @@
 /**
  * Bubble manager — listens to scene + music state, picks Boys to speak,
- * places SVG speech bubbles anchored to each boy.
+ * places SVG speech bubbles directly above each speaking boy.
  *
- * Strategy:
- *  - When `isPlaying`: every (random 2–5 bars) one boy speaks an idle line.
- *  - When `mood === 'drop'`: 2–3 boys speak hype/drop lines together.
- *  - When acid mode kicks in: a boy says an acid line.
- *
- * Each bubble lives ~2.4s (CSS-driven), then removes itself.
+ * Each bubble:
+ *  - Anchors to a specific .boy element via getBoundingClientRect
+ *  - Stays attached even as the boy dances (re-reads position on each render)
+ *  - Draws an SVG tail from its bottom edge to the boy's head, so the source
+ *    of the line is unambiguous
  */
 import { For, createSignal, onCleanup, createEffect, on } from 'solid-js';
 import { isPlaying, barCount, mood, lastDrop } from '../state';
@@ -20,7 +19,9 @@ interface Bubble {
   boyId: BoyId;
   text: string;
   mood: SpruchMood;
-  side: 'left' | 'right';
+  /** Initial horizontal offset from the boy's centre, so two simultaneous
+   *  bubbles on the same boy don't perfectly overlap */
+  offsetX: number;
 }
 
 let bubbleIdSeq = 0;
@@ -28,20 +29,19 @@ let bubbleIdSeq = 0;
 export function BubbleLayer() {
   const [bubbles, setBubbles] = createSignal<Bubble[]>([]);
 
-  const add = (boyId: BoyId, mood: SpruchMood) => {
-    const text = pickSprueche(boyId, mood);
-    const idx = BOYS.findIndex((b) => b.id === boyId);
-    const side: 'left' | 'right' = idx < 2 ? 'right' : idx > 2 ? 'left' : Math.random() < 0.5 ? 'left' : 'right';
+  const add = (boyId: BoyId, m: SpruchMood) => {
+    const text = pickSprueche(boyId, m);
     const id = ++bubbleIdSeq;
-    setBubbles((prev) => [...prev, { id, boyId, text, mood, side }]);
+    const offsetX = Math.random() * 40 - 20;
+    setBubbles((prev) => [...prev, { id, boyId, text, mood: m, offsetX }]);
     setTimeout(() => setBubbles((prev) => prev.filter((b) => b.id !== id)), 3400);
   };
 
-  // Random idle chatter every 1-3 bars while playing
+  // Random idle chatter every bar while playing
   createEffect(
     on(barCount, () => {
       if (!isPlaying()) return;
-      if (Math.random() < 0.55) {
+      if (Math.random() < 0.6) {
         const boy = BOYS[Math.floor(Math.random() * BOYS.length)];
         const m = mood();
         const spruchMood: SpruchMood =
@@ -51,12 +51,11 @@ export function BubbleLayer() {
     }),
   );
 
-  // On drop: 2-3 boys react
+  // On drop: 3 boys react (always include eggplant)
   createEffect(
     on(lastDrop, (t) => {
       if (!t) return;
       const pool = [...BOYS];
-      // Always include the eggplant — he's the main
       const eggplant = pool.find((b) => b.id === 'eggplant');
       const others = pool.filter((b) => b.id !== 'eggplant').sort(() => Math.random() - 0.5);
       const speakers = [eggplant, others[0], others[1]].filter(Boolean) as typeof BOYS;
@@ -84,24 +83,55 @@ export function BubbleLayer() {
   );
 }
 
+/**
+ * A single bubble. Reads the target boy's bounding box live so the bubble
+ * sits directly above that boy even though the boy is dancing.
+ */
 function SpeechBubble(props: { bubble: Bubble }) {
-  // Compute anchor: roughly above each boy's head, based on their index in the row.
-  const idx = () => BOYS.findIndex((b) => b.id === props.bubble.boyId);
-  // 5 boys → spread across the stage in 5 columns
-  const xPercent = () => 14 + idx() * 18; // 14, 32, 50, 68, 86 (%)
-
-  // Bubble width scales with text length
+  // Width scales with text length
   const textLen = () => props.bubble.text.length;
-  const w = () => Math.min(220, Math.max(80, textLen() * 7 + 28));
-  const h = 56;
-  const tailH = 22;
+  const bubbleW = () => Math.min(220, Math.max(80, textLen() * 7 + 28));
+  const bubbleH = 52;
+  const tailH = 32;
+
+  // Position relative to the .stage container, anchored over the boy.
+  const [pos, setPos] = createSignal({ left: 0, top: 0, tailDx: 0 });
+
+  function updatePos() {
+    const boy = document.querySelector(`.boy[data-id="${props.bubble.boyId}"]`);
+    const stage = document.querySelector('.stage');
+    if (!boy || !stage) return;
+    const b = boy.getBoundingClientRect();
+    const s = stage.getBoundingClientRect();
+    const boyCenterX = b.left + b.width / 2 - s.left;
+    const boyHeadY = b.top - s.top;
+
+    // Bubble sits above the boy's head, but never higher than 8px from the
+    // stage's top edge — clamp so it stays visible even with tall boys.
+    let top = boyHeadY - (bubbleH + tailH) - 6;
+    if (top < 8) top = 8;
+    let left = boyCenterX + props.bubble.offsetX - bubbleW() / 2;
+    // Keep bubble fully on-stage horizontally
+    const stageW = s.width;
+    if (left < 6) left = 6;
+    if (left + bubbleW() + 12 > stageW - 6) left = stageW - bubbleW() - 18;
+
+    // Tail dx: how far the tail tip is from the bubble's center, so it lands on the boy's head
+    const bubbleCenterX = left + (bubbleW() + 12) / 2;
+    const tailDx = Math.max(-bubbleW() / 2 + 18, Math.min(bubbleW() / 2 - 18, boyCenterX - bubbleCenterX));
+    setPos({ left, top, tailDx });
+  }
+
+  // Solid renders this once; the dance keyframes move the boy, so re-poll
+  // a few times in the first half-second so the tail tracks the boy as it bobs.
+  updatePos();
+  const handle = setInterval(updatePos, 80);
+  setTimeout(() => clearInterval(handle), 3500);
+  onCleanup(() => clearInterval(handle));
 
   const padding = 6;
-  const side = () => props.bubble.side;
-
-  // Vertical position: center boy is biggest so its bubble sits highest.
-  // Side boys are slightly lower because they're smaller and bubbles look balanced.
-  const bottomPct = () => (idx() === 2 ? 70 : idx() === 1 || idx() === 3 ? 62 : 56);
+  const totalW = () => bubbleW() + padding * 2;
+  const totalH = bubbleH + tailH;
 
   return (
     <div
@@ -109,29 +139,37 @@ function SpeechBubble(props: { bubble: Bubble }) {
       data-mood={props.bubble.mood}
       data-boy={props.bubble.boyId}
       style={{
-        left: `${xPercent()}%`,
-        bottom: `${bottomPct()}%`,
-        transform: 'translateX(-50%)',
-        width: `${w() + padding * 2}px`,
-        height: `${h + tailH}px`,
+        left: `${pos().left}px`,
+        top: `${pos().top}px`,
+        width: `${totalW()}px`,
+        height: `${totalH}px`,
       }}
     >
-      <svg width={w() + padding * 2} height={h + tailH} viewBox={`0 0 ${w() + padding * 2} ${h + tailH}`}>
-        {/* Tail — points down toward the boy */}
+      <svg width={totalW()} height={totalH} viewBox={`0 0 ${totalW()} ${totalH}`}>
+        {/* Tail — wedge that points to the boy's head */}
         <path
           class="bubble-tail"
-          d={
-            side() === 'left'
-              ? `M ${w() * 0.32} ${h - 4} L ${w() * 0.18} ${h + tailH - 2} L ${w() * 0.46} ${h - 8} Z`
-              : `M ${w() * 0.68} ${h - 4} L ${w() * 0.82} ${h + tailH - 2} L ${w() * 0.54} ${h - 8} Z`
-          }
+          d={`
+            M ${totalW() / 2 - 14} ${bubbleH - 4}
+            L ${totalW() / 2 + pos().tailDx} ${totalH - 2}
+            L ${totalW() / 2 + 14} ${bubbleH - 4}
+            Z
+          `}
         />
-        {/* Bubble body — rounded comic shape with a couple of pinches */}
-        <rect class="bubble-body" x={padding} y={4} rx={h * 0.5} ry={h * 0.5} width={w()} height={h - 8} />
+        {/* Bubble body */}
+        <rect
+          class="bubble-body"
+          x={padding}
+          y={4}
+          rx={bubbleH * 0.5}
+          ry={bubbleH * 0.5}
+          width={bubbleW()}
+          height={bubbleH - 8}
+        />
         <text
           class="bubble-text"
-          x={(w() + padding * 2) / 2}
-          y={h * 0.5 + 2}
+          x={totalW() / 2}
+          y={bubbleH * 0.5 + 2}
           font-size={textLen() > 16 ? '12' : '14'}
         >
           {props.bubble.text}
