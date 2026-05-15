@@ -5,3 +5,9 @@ dist
 .vite
 .vscode
 .idea
+# tsc -b emit artifacts — vite consumes the .ts/.tsx directly
+src/**/*.js
+src/**/*.jsx
+vite.config.js
+*.tsbuildinfo
+
