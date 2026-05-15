@@ -1,26 +1,26 @@
 /**
- * Boys Club roster. Each boy has:
- *  - id: stable key
- *  - name: display name
- *  - color: accent for glow + speech bubble
- *  - dance: which dance animation pattern (A/B/C/D/E)
- *  - phase: animation offset so they don't sync
- *  - mood-pool: speech topics that fit their character
+ * Boys Club roster. Each boy has a zone in the disco scene:
  *
- * Image source for cutouts is /public/boys/<id>.png (added once we have the assets).
+ *   eggplant  — center stage, $DISCO is the DJ (behind the decks)
+ *   pepe      — dance floor, front-left, dancing
+ *   maus      — dance floor, front-right, dancing
+ *   burns     — near the bar, sipping martini, chill
+ *   landwulf  — at the bar (right side), hand raised
+ *
+ * `zone` controls placement; `dance` controls which keyframe animation they
+ * play (dancers do big bobs, bar-folks do subtle sway).
  */
+export type Zone = 'dj' | 'dancefloor-l' | 'dancefloor-r' | 'bar-side' | 'bar';
+
 export interface BoyDef {
   id: string;
   name: string;
   color: string;
   accent: string;
   dance: 'A' | 'B' | 'C' | 'D' | 'E';
-  /** delay in beats (negative = start earlier) */
-  delayBeats: number;
-  scale: number;
+  zone: Zone;
 }
 
-// Order = visual left → right on stage. Eggplant in the center (he's the $DISCO hero).
 export const BOYS: BoyDef[] = [
   {
     id: 'pepe',
@@ -28,35 +28,23 @@ export const BOYS: BoyDef[] = [
     color: '#39ff14',
     accent: '#1c6b1c',
     dance: 'A',
-    delayBeats: 0,
-    scale: 1.0,
-  },
-  {
-    id: 'hippie',
-    name: 'HIPPIE',
-    color: '#b346c8',
-    accent: '#3d0a4f',
-    dance: 'E',
-    delayBeats: 0.75,
-    scale: 1.05,
+    zone: 'dancefloor-l',
   },
   {
     id: 'eggplant',
-    name: 'EGGPLANT',
+    name: 'DISCO',
     color: '#ff2bd6',
     accent: '#5a1873',
     dance: 'C',
-    delayBeats: -0.5,
-    scale: 1.1,
+    zone: 'dj',
   },
   {
     id: 'maus',
-    name: 'BIZ MAUS',
+    name: 'MAUS',
     color: '#7aa3ff',
     accent: '#1f3a73',
     dance: 'B',
-    delayBeats: 0.25,
-    scale: 1.0,
+    zone: 'dancefloor-r',
   },
   {
     id: 'burns',
@@ -64,8 +52,15 @@ export const BOYS: BoyDef[] = [
     color: '#ffd24a',
     accent: '#7a4a00',
     dance: 'D',
-    delayBeats: 1,
-    scale: 0.95,
+    zone: 'bar-side',
+  },
+  {
+    id: 'landwulf',
+    name: 'LANDWULF',
+    color: '#ff7a00',
+    accent: '#7a3a00',
+    dance: 'E',
+    zone: 'bar',
   },
 ];
 

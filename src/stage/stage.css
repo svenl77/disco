@@ -2,30 +2,28 @@
 .stage {
   position: relative;
   width: 100%;
-  height: 460px;
+  height: 500px;
   overflow: hidden;
-  background: linear-gradient(180deg,
-    #0a0014 0%,
-    #1a0028 35%,
-    #08010a 100%);
+  background:
+    radial-gradient(ellipse 60% 45% at 50% 35%,
+      rgba(60, 0, 100, 0.55) 0%,
+      transparent 60%),
+    linear-gradient(180deg,
+      #0a0014 0%,
+      #1a0028 35%,
+      #08010a 100%);
   border-top: 2px solid rgba(255, 43, 214, 0.3);
   border-bottom: 2px solid rgba(0, 240, 255, 0.3);
   contain: strict;
   transition: filter 0.4s ease;
-  perspective: 900px;
+  perspective: 1100px;
   perspective-origin: 50% 60%;
 }
-.stage[data-mood='acid'] {
-  filter: hue-rotate(-30deg) saturate(1.4) brightness(1.05);
-}
-.stage[data-mood='drop'] {
-  filter: brightness(1.25) saturate(1.3);
-}
-.stage[data-mood='hype'] {
-  filter: brightness(1.1);
-}
+.stage[data-mood='acid'] { filter: hue-rotate(-30deg) saturate(1.4) brightness(1.05); }
+.stage[data-mood='drop'] { filter: brightness(1.25) saturate(1.3); }
+.stage[data-mood='hype'] { filter: brightness(1.1); }
 
-/* === ROOM: back wall + DJ booth + speakers === */
+/* === BACK WALL + CEILING === */
 .room-back {
   position: absolute;
   top: 0;
@@ -33,26 +31,22 @@
   right: 0;
   height: 65%;
   background:
-    /* spotlight glow center */
-    radial-gradient(ellipse 60% 80% at 50% 90%,
+    radial-gradient(ellipse 50% 80% at 50% 100%,
       rgba(255, 43, 214, 0.18) 0%,
       transparent 70%),
-    /* wall gradient — fades to dark sides */
     linear-gradient(90deg,
       #08010a 0%,
-      #1a0028 15%,
+      #160028 12%,
       #2a0050 50%,
-      #1a0028 85%,
+      #160028 88%,
       #08010a 100%);
   z-index: 0;
-  pointer-events: none;
 }
-
-/* Subtle "neon strip" along the top of the wall */
+/* Ceiling neon strip */
 .room-back::before {
   content: '';
   position: absolute;
-  top: 10%;
+  top: 6%;
   left: 4%;
   right: 4%;
   height: 3px;
@@ -65,58 +59,160 @@
   box-shadow: 0 0 14px rgba(255, 43, 214, 0.7);
   filter: blur(0.5px);
 }
-
-/* DJ booth — small silhouette at the back behind the boys */
-.dj-booth {
-  position: absolute;
-  bottom: 38%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 180px;
-  height: 60px;
-  background: linear-gradient(180deg, rgba(20, 0, 40, 0.95), rgba(8, 0, 14, 1));
-  border: 1.5px solid rgba(0, 240, 255, 0.35);
-  border-radius: 8px 8px 0 0;
-  box-shadow:
-    0 -2px 12px rgba(0, 240, 255, 0.3),
-    inset 0 0 18px rgba(0, 0, 0, 0.6);
-  z-index: 1;
-}
-.dj-booth::before,
-.dj-booth::after {
+/* Tiny stars/sparkles on the back wall */
+.room-back::after {
   content: '';
   position: absolute;
-  top: 14px;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #ff2bd6 0%, #6b0050 80%);
-  box-shadow: 0 0 8px var(--pink);
-  animation: djLed 1.1s ease-in-out infinite alternate;
+  inset: 10% 8% 35% 8%;
+  background-image:
+    radial-gradient(circle at 12% 30%, white 0.5px, transparent 1.5px),
+    radial-gradient(circle at 28% 80%, white 0.5px, transparent 1.5px),
+    radial-gradient(circle at 45% 22%, white 0.5px, transparent 1.5px),
+    radial-gradient(circle at 62% 70%, white 0.5px, transparent 1.5px),
+    radial-gradient(circle at 78% 18%, white 0.5px, transparent 1.5px),
+    radial-gradient(circle at 92% 60%, white 0.5px, transparent 1.5px),
+    radial-gradient(circle at 5% 65%, white 0.5px, transparent 1.5px),
+    radial-gradient(circle at 35% 50%, white 0.5px, transparent 1.5px);
+  opacity: 0.6;
+  animation: starsTwinkle 3s ease-in-out infinite alternate;
 }
-.dj-booth::before { left: 30px; }
-.dj-booth::after { right: 30px; animation-delay: 0.5s; }
-@keyframes djLed {
-  from { box-shadow: 0 0 4px var(--pink); }
-  to   { box-shadow: 0 0 12px var(--pink); }
-}
+@keyframes starsTwinkle { from { opacity: 0.3; } to { opacity: 0.9; } }
 
-/* Speakers flanking the booth */
-.speaker {
+/* === DJ STAGE === a raised platform centred at back */
+.dj-stage {
   position: absolute;
   bottom: 36%;
-  width: 56px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 280px;
   height: 90px;
-  background: linear-gradient(180deg, #14001f 0%, #0a000f 100%);
+  background:
+    linear-gradient(180deg,
+      #2a0050 0%,
+      #1a0028 60%,
+      #0a000f 100%);
+  border-top: 2px solid rgba(0, 240, 255, 0.6);
+  border-left: 1px solid rgba(255, 43, 214, 0.5);
+  border-right: 1px solid rgba(255, 43, 214, 0.5);
+  box-shadow:
+    0 0 28px rgba(0, 240, 255, 0.4),
+    inset 0 0 30px rgba(0, 0, 0, 0.6);
+  z-index: 1;
+  border-radius: 6px 6px 0 0;
+}
+/* Stage edge LED strip */
+.dj-stage::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--pink), var(--cyan), var(--yellow), var(--cyan), var(--pink));
+  box-shadow: 0 0 12px var(--cyan);
+  animation: stageLedShift 4s linear infinite;
+  background-size: 200% 100%;
+}
+@keyframes stageLedShift { to { background-position: 200% 0; } }
+
+/* === DJ PULT — turntables + mixer in front of the DJ === */
+.dj-pult {
+  position: absolute;
+  bottom: -34px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 210px;
+  height: 50px;
+  background: linear-gradient(180deg, #1a1a22 0%, #08080d 100%);
   border: 1.5px solid rgba(255, 43, 214, 0.4);
+  border-radius: 4px;
+  box-shadow:
+    0 4px 18px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  z-index: 2;
+}
+.deck {
+  position: absolute;
+  top: 8px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%,
+      #000 0%, #000 30%,
+      #444 32%, #222 60%, #000 100%);
+  box-shadow: inset 0 0 4px rgba(255, 255, 255, 0.15);
+  animation: deckSpin 1.4s linear infinite;
+}
+.deck::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--pink);
+  box-shadow: 0 0 6px var(--pink);
+  transform: translate(-50%, -50%);
+}
+.deck-l { left: 10px; }
+.deck-r { right: 10px; }
+@keyframes deckSpin { to { transform: rotate(360deg); } }
+
+.mixer {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 28px;
+  background: linear-gradient(180deg, #2a2a35, #14141a);
+  border-radius: 3px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+.mixer::before, .mixer::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  width: 2px;
+  height: 12px;
+  background: var(--cyan);
+  box-shadow: 0 0 4px var(--cyan);
+}
+.mixer::before { left: 18px; }
+.mixer::after  { right: 18px; }
+
+.dj-label {
+  position: absolute;
+  top: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 3px;
+  color: var(--pink);
+  text-shadow: 0 0 8px var(--pink);
+  white-space: nowrap;
+  z-index: 3;
+}
+
+/* === SPEAKER STACKS — flank the DJ stage === */
+.speaker {
+  position: absolute;
+  bottom: 32%;
+  width: 60px;
+  height: 130px;
+  background: linear-gradient(180deg, #14001f 0%, #08000d 100%);
+  border: 1.5px solid rgba(255, 43, 214, 0.5);
   border-radius: 4px;
   box-shadow:
     0 0 14px rgba(255, 43, 214, 0.25),
     inset 0 0 12px rgba(0, 0, 0, 0.7);
-  z-index: 1;
+  z-index: 2;
+  animation: speakerPulse var(--beat-ms) ease-out infinite alternate;
 }
-.speaker::before,
-.speaker::after {
+.speaker::before, .speaker::after {
   content: '';
   position: absolute;
   left: 50%;
@@ -129,34 +225,164 @@
       #000 100%);
   border: 1px solid rgba(0, 240, 255, 0.3);
 }
-.speaker::before { top: 8px;  width: 38px; height: 38px; }
-.speaker::after  { top: 50px; width: 22px; height: 22px; }
-/* Speakers sit OUTSIDE the boys cluster (which is ~860px wide) */
-.speaker.left  { left:  calc(50% - 470px); }
-.speaker.right { right: calc(50% - 470px); }
-
-@media (max-width: 1100px) {
-  .speaker.left  { left:  calc(50% - 380px); }
-  .speaker.right { right: calc(50% - 380px); }
-}
-@media (max-width: 880px) {
-  .speaker { width: 42px; height: 70px; }
-  .speaker::before { width: 28px; height: 28px; }
-  .speaker::after  { width: 16px; height: 16px; top: 38px; }
-  .speaker.left  { left:  calc(50% - 290px); }
-  .speaker.right { right: calc(50% - 290px); }
-}
-@media (max-width: 720px) {
-  .speaker { display: none; }
-}
-
-/* Speakers pulse on every beat */
-.speaker {
-  animation: speakerPulse var(--beat-ms) ease-out infinite alternate;
-}
+.speaker::before { top: 12px; width: 42px; height: 42px; }
+.speaker::after  { top: 70px; width: 28px; height: 28px; }
+.speaker.stack-l { left:  calc(50% - 200px); }
+.speaker.stack-r { right: calc(50% - 200px); }
 @keyframes speakerPulse {
   from { box-shadow: 0 0 8px rgba(255, 43, 214, 0.2), inset 0 0 12px rgba(0, 0, 0, 0.7); }
-  to   { box-shadow: 0 0 20px rgba(255, 43, 214, 0.55), inset 0 0 12px rgba(0, 0, 0, 0.7); }
+  to   { box-shadow: 0 0 22px rgba(255, 43, 214, 0.6), inset 0 0 12px rgba(0, 0, 0, 0.7); }
+}
+
+/* === THE BAR === stylish corner with bottle shelf, counter and stool ===
+   Sits in the bottom-right of the stage. Slightly tilted backwall for depth. */
+.bar {
+  position: absolute;
+  bottom: 6%;
+  right: -10px;
+  width: 280px;
+  height: 290px;
+  z-index: 4;
+  pointer-events: none;
+  perspective: 600px;
+}
+/* Backwall with bottle shelf */
+.bar-bottles {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 170px;
+  background:
+    /* The actual bottles — each is a tall glow */
+    radial-gradient(ellipse 6px 32px at 15% 60%, rgba(255, 43, 214, 0.75) 0%, rgba(255, 43, 214, 0.15) 60%, transparent 80%),
+    radial-gradient(ellipse 7px 36px at 26% 55%, rgba(0, 240, 255, 0.75) 0%, rgba(0, 240, 255, 0.15) 60%, transparent 80%),
+    radial-gradient(ellipse 6px 34px at 36% 58%, rgba(255, 242, 0, 0.7) 0%, rgba(255, 242, 0, 0.15) 60%, transparent 80%),
+    radial-gradient(ellipse 6px 30px at 46% 62%, rgba(57, 255, 20, 0.7) 0%, rgba(57, 255, 20, 0.15) 60%, transparent 80%),
+    radial-gradient(ellipse 7px 34px at 56% 56%, rgba(179, 70, 200, 0.75) 0%, rgba(179, 70, 200, 0.15) 60%, transparent 80%),
+    radial-gradient(ellipse 6px 32px at 66% 60%, rgba(255, 122, 0, 0.75) 0%, rgba(255, 122, 0, 0.15) 60%, transparent 80%),
+    radial-gradient(ellipse 6px 30px at 76% 58%, rgba(255, 43, 214, 0.7) 0%, rgba(255, 43, 214, 0.15) 60%, transparent 80%),
+    radial-gradient(ellipse 7px 34px at 86% 56%, rgba(0, 240, 255, 0.7) 0%, rgba(0, 240, 255, 0.15) 60%, transparent 80%),
+    /* shelf line */
+    linear-gradient(180deg,
+      transparent 0%,
+      transparent 78%,
+      rgba(0, 240, 255, 0.7) 78%,
+      rgba(0, 240, 255, 0.7) 79%,
+      transparent 79%,
+      transparent 100%),
+    /* wall behind the bottles */
+    linear-gradient(180deg, rgba(40, 0, 80, 0.95) 0%, rgba(20, 0, 40, 0.95) 60%, rgba(10, 0, 20, 0.95) 100%);
+}
+/* "BAR" neon sign behind the bottles */
+.bar-bottles::before {
+  content: 'BAR';
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 6px;
+  color: var(--pink);
+  text-shadow:
+    0 0 6px var(--pink),
+    0 0 16px var(--pink),
+    0 0 24px rgba(255, 43, 214, 0.4);
+  animation: barNeonFlicker 4s ease-in-out infinite;
+}
+@keyframes barNeonFlicker {
+  0%, 100% { opacity: 1; }
+  47%      { opacity: 1; }
+  48%      { opacity: 0.3; }
+  49%      { opacity: 1; }
+  88%      { opacity: 1; }
+  89%      { opacity: 0.5; }
+  90%      { opacity: 1; }
+}
+
+.bar-counter {
+  position: absolute;
+  bottom: 70px;
+  right: 0;
+  width: 100%;
+  height: 26px;
+  background:
+    linear-gradient(180deg,
+      #4a2670 0%,
+      #2a0050 40%,
+      #1a0028 70%,
+      #0a000f 100%);
+  border-top: 2px solid rgba(0, 240, 255, 0.7);
+  border-left: 1px solid rgba(255, 43, 214, 0.4);
+  box-shadow:
+    0 0 24px rgba(0, 240, 255, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+.bar-counter::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--cyan), var(--pink), var(--cyan), transparent);
+  box-shadow: 0 0 10px var(--cyan);
+}
+.bar-counter::after {
+  /* a martini glass / drink on the counter */
+  content: '';
+  position: absolute;
+  top: -14px;
+  left: 30%;
+  width: 10px;
+  height: 14px;
+  background:
+    radial-gradient(ellipse 5px 3px at 50% 100%, rgba(255, 242, 0, 0.9), transparent 70%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.1) 100%);
+  clip-path: polygon(0% 0%, 100% 0%, 60% 50%, 60% 90%, 100% 90%, 100% 100%, 0% 100%, 0% 90%, 40% 90%, 40% 50%);
+}
+
+.bar-stool {
+  position: absolute;
+  bottom: 0;
+  right: 60px;
+  width: 16px;
+  height: 70px;
+  background: linear-gradient(180deg, #14001f 0%, #08000d 100%);
+  border-radius: 4px 4px 2px 2px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+.bar-stool::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: -10px;
+  width: 36px;
+  height: 12px;
+  background: radial-gradient(ellipse at center, #4a2670, #1a0028);
+  border-radius: 50%;
+  border-top: 1.5px solid rgba(255, 43, 214, 0.4);
+  box-shadow: 0 0 8px rgba(255, 43, 214, 0.3);
+}
+/* Bar glow — soft pink/cyan light from the bar */
+.bar-glow {
+  position: absolute;
+  bottom: 60px;
+  right: -20px;
+  width: 100%;
+  height: 140px;
+  background: radial-gradient(ellipse at center top,
+    rgba(255, 43, 214, 0.3) 0%,
+    rgba(0, 240, 255, 0.18) 35%,
+    transparent 70%);
+  filter: blur(10px);
+  animation: barGlowPulse 2.4s ease-in-out infinite alternate;
+}
+@keyframes barGlowPulse {
+  from { opacity: 0.5; }
+  to   { opacity: 1; }
 }
 
 /* === PERSPECTIVE FLOOR === */
@@ -164,255 +390,80 @@
   position: absolute;
   bottom: 0;
   left: 50%;
-  width: 220%;
-  height: 60%;
+  width: 240%;
+  height: 70%;
   transform-origin: 50% 100%;
-  /* Tilted floor with vanishing point — rotateX around the bottom edge */
-  transform: translateX(-50%) rotateX(72deg);
+  transform: translateX(-50%) rotateX(74deg);
   background:
-    /* horizontal lines spaced wider near front, getting compressed near back */
     repeating-linear-gradient(0deg,
-      rgba(0, 240, 255, 0.30) 0,
-      rgba(0, 240, 255, 0.30) 1px,
+      rgba(0, 240, 255, 0.32) 0,
+      rgba(0, 240, 255, 0.32) 1px,
       transparent 1px,
-      transparent 50px),
-    /* vertical lines */
+      transparent 55px),
     repeating-linear-gradient(90deg,
-      rgba(255, 43, 214, 0.30) 0,
-      rgba(255, 43, 214, 0.30) 1px,
+      rgba(255, 43, 214, 0.32) 0,
+      rgba(255, 43, 214, 0.32) 1px,
       transparent 1px,
-      transparent 50px),
-    /* base glow */
+      transparent 55px),
     radial-gradient(ellipse at 50% 100%,
-      rgba(255, 43, 214, 0.25) 0%,
-      rgba(0, 240, 255, 0.18) 20%,
+      rgba(255, 43, 214, 0.3) 0%,
+      rgba(0, 240, 255, 0.2) 20%,
       rgba(0, 0, 0, 0.95) 80%);
   pointer-events: none;
   z-index: 2;
 }
-/* Fade the floor toward the horizon so the lines vanish naturally */
 .floor-3d::after {
   content: '';
   position: absolute;
   inset: 0;
   background: linear-gradient(0deg,
     transparent 0%,
-    rgba(8, 1, 10, 0.4) 50%,
+    rgba(8, 1, 10, 0.5) 60%,
     rgba(8, 1, 10, 1) 100%);
 }
 
-/* === REFLECTIVE LIGHT SPOTS — radial pattern of dots that rotate
-       as a group, simulating the disco ball reflecting light onto walls/floor === */
-.reflective-spots {
+/* Subtle dance floor glow on top of the perspective grid */
+.dance-floor-glow {
   position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1;
-  /* Rotates in sync with the ball's meridians */
-  animation: spotsRotate 12s linear infinite;
-  transform-origin: 50% 25%;  /* center matches disco ball position */
-}
-.spot {
-  position: absolute;
-  top: 25%;
+  bottom: 0;
   left: 50%;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.7);
-  filter: blur(0.5px);
-  box-shadow: 0 0 6px rgba(255, 255, 255, 0.4);
-  transform-origin: 0 0;
-  animation: spotTwinkle 0.9s ease-in-out infinite alternate;
-  will-change: transform, opacity;
-}
-.spot.tinted-pink   { background: rgba(255, 43, 214, 0.8);  box-shadow: 0 0 8px var(--pink); }
-.spot.tinted-cyan   { background: rgba(0, 240, 255, 0.8);   box-shadow: 0 0 8px var(--cyan); }
-.spot.tinted-yellow { background: rgba(255, 242, 0, 0.8);   box-shadow: 0 0 8px var(--yellow); }
-@keyframes spotsRotate { to { transform: rotate(360deg); } }
-@keyframes spotTwinkle {
-  0%, 100% { opacity: 0.25; }
-  50%      { opacity: 1; }
-}
-.stage[data-mood='drop']   .spot { animation-duration: 0.3s !important; }
-.stage[data-mood='hype']   .spot { animation-duration: 0.5s !important; }
-
-/* === DJ LASERS — beams from each speaker/booth aimed at the disco ball ===
-   The disco ball sits at (50%, 12%) of the stage. Each laser originates from
-   a specific spot and "points" at the ball via initial rotation, then sweeps
-   gently. mix-blend: screen makes them blend like real volumetric light. */
-.dj-lasers {
-  position: absolute;
-  inset: 0;
+  width: 700px;
+  height: 80px;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse at center 60%,
+    rgba(255, 43, 214, 0.4) 0%,
+    rgba(0, 240, 255, 0.2) 35%,
+    transparent 75%);
+  filter: blur(10px);
+  z-index: 3;
   pointer-events: none;
-  z-index: 1;
-  mix-blend-mode: screen;
+  animation: floorPulse var(--beat-ms) ease-in-out infinite alternate;
 }
-.laser {
-  position: absolute;
-  width: 4px;
-  background: linear-gradient(180deg,
-    transparent 0%,
-    currentColor 12%,
-    currentColor 80%,
-    transparent 100%);
-  transform-origin: top center;
-  filter: blur(1.5px);
-  opacity: 0.45;
-  animation: laserSweep 5s ease-in-out infinite alternate;
+@keyframes floorPulse {
+  from { opacity: 0.5; transform: translateX(-50%) scaleX(0.95); }
+  to   { opacity: 1;   transform: translateX(-50%) scaleX(1.05); }
 }
 
-/* Each laser starts at a speaker / booth corner and points roughly at the ball.
-   The `bottom` and `left/right` give the origin; the `transform: rotate(180deg)`
-   plus the `transform-origin: top center` means the bar grows downward from the
-   origin but we flip it visually so it points up by inverting it.
-   Trick: position the top of the bar AT the origin and let it extend downward —
-   we use a long bar and clip with the stage overflow. */
-.laser-1 {
-  top: 12%; left: 50%;
-  height: 90%;
-  width: 3px;
-  color: var(--pink);
-  transform: translateX(-1.5px) rotate(38deg);
-  --rot-from: 36deg; --rot-to: 50deg;
-}
-.laser-2 {
-  top: 12%; left: 50%;
-  height: 95%;
-  width: 3px;
-  color: var(--cyan);
-  transform: translateX(-1.5px) rotate(-38deg);
-  --rot-from: -36deg; --rot-to: -50deg;
-}
-.laser-3 {
-  top: 12%; left: 50%;
-  height: 85%;
-  width: 2.5px;
-  color: var(--yellow);
-  transform: translateX(-1.5px) rotate(15deg);
-  --rot-from: 12deg; --rot-to: 22deg;
-  animation-delay: -1.5s;
-}
-.laser-4 {
-  top: 12%; left: 50%;
-  height: 85%;
-  width: 2.5px;
-  color: var(--green);
-  transform: translateX(-1.5px) rotate(-15deg);
-  --rot-from: -12deg; --rot-to: -22deg;
-  animation-delay: -3s;
-}
-
-/* Important: rotate around the origin (top center, where the disco ball is) */
-@keyframes laserSweep {
-  0%   { transform: translateX(-1.5px) rotate(var(--rot-from)); opacity: 0.4; }
-  50%  { opacity: 0.85; }
-  100% { transform: translateX(-1.5px) rotate(var(--rot-to));   opacity: 0.5; }
-}
-
-/* On drop and hype: lasers intensify */
-.stage[data-mood='drop'] .laser {
-  opacity: 1 !important;
-  animation-duration: 0.8s !important;
-  filter: blur(0.8px);
-}
-.stage[data-mood='hype'] .laser {
-  opacity: 0.85 !important;
-  animation-duration: 2.2s !important;
-}
-
-.stage-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-  z-index: 1;
-}
-
-/* === DISCO BALL === */
+/* === DISCO BALL === overhead, centred above the DJ stage === */
 .ball-wrap {
   position: absolute;
-  top: 10px;
+  top: 18px;
   left: 50%;
   transform: translateX(-50%);
-  width: 160px;
-  height: 160px;
+  width: 150px;
+  height: 150px;
   z-index: 3;
   pointer-events: none;
 }
 .ball-string {
   position: absolute;
-  top: -20px;
+  top: -22px;
   left: 50%;
   width: 2px;
-  height: 22px;
+  height: 24px;
   background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.55));
   transform: translateX(-50%);
   box-shadow: 0 0 4px rgba(255, 255, 255, 0.4);
-}
-
-.ball-beams {
-  position: absolute;
-  top: -140px;
-  left: -240px;
-  width: 640px;
-  height: 460px;
-  pointer-events: none;
-  background: conic-gradient(
-    from 0deg at 50% 32%,
-    transparent 0deg,
-    rgba(255, 255, 255, 0.10) 4deg,
-    transparent 8deg,
-    transparent 38deg,
-    rgba(255, 43, 214, 0.12) 42deg,
-    transparent 46deg,
-    transparent 78deg,
-    rgba(0, 240, 255, 0.12) 82deg,
-    transparent 86deg,
-    transparent 118deg,
-    rgba(255, 242, 0, 0.10) 122deg,
-    transparent 126deg,
-    transparent 158deg,
-    rgba(57, 255, 20, 0.10) 162deg,
-    transparent 166deg,
-    transparent 200deg,
-    rgba(255, 122, 0, 0.10) 204deg,
-    transparent 208deg,
-    transparent 240deg,
-    rgba(255, 255, 255, 0.08) 244deg,
-    transparent 248deg,
-    transparent 290deg,
-    rgba(179, 70, 200, 0.12) 294deg,
-    transparent 298deg,
-    transparent 330deg,
-    rgba(0, 240, 255, 0.10) 334deg,
-    transparent 338deg
-  );
-  mix-blend-mode: screen;
-  animation: beamsRotate 14s linear infinite;
-  -webkit-mask-image: radial-gradient(
-    ellipse 80px 80px at 50% 32%,
-    transparent 0,
-    transparent 78px,
-    #000 88px,
-    #000 60%,
-    transparent 100%
-  );
-  mask-image: radial-gradient(
-    ellipse 80px 80px at 50% 32%,
-    transparent 0,
-    transparent 78px,
-    #000 88px,
-    #000 60%,
-    transparent 100%
-  );
-  z-index: 1;
-}
-@keyframes beamsRotate {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 .discoball {
@@ -434,105 +485,77 @@
     #8493b0 30%,
     #4b5a76 55%,
     #232c44 80%,
-    #08101e 100%
-  );
+    #08101e 100%);
   z-index: 2;
 }
-
-.discoball-lat,
-.discoball-mer {
+.discoball-lat, .discoball-mer {
   position: absolute;
   inset: 0;
   border-radius: 50%;
   mix-blend-mode: multiply;
   -webkit-mask-image: radial-gradient(circle, #000 60%, transparent 96%);
-  mask-image: radial-gradient(circle, #000 60%, transparent 96%);
+          mask-image: radial-gradient(circle, #000 60%, transparent 96%);
 }
 .discoball-lat {
-  background: repeating-linear-gradient(
-    0deg,
+  background: repeating-linear-gradient(0deg,
     transparent 0,
     transparent 9px,
     rgba(0, 0, 0, 0.55) 9px,
-    rgba(0, 0, 0, 0.55) 10px
-  );
+    rgba(0, 0, 0, 0.55) 10px);
 }
 .discoball-mer {
-  background: repeating-linear-gradient(
-    90deg,
+  background: repeating-linear-gradient(90deg,
     transparent 0,
     transparent 9px,
     rgba(0, 0, 0, 0.55) 9px,
-    rgba(0, 0, 0, 0.55) 10px
-  );
+    rgba(0, 0, 0, 0.55) 10px);
   animation: meridianSpin 3.2s linear infinite;
 }
 @keyframes meridianSpin {
-  from {
-    background-position: 0 0;
-  }
-  to {
-    background-position: 80px 0;
-  }
+  from { background-position: 0 0; }
+  to   { background-position: 80px 0; }
 }
-
 .discoball-sweep {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background: linear-gradient(
-    100deg,
+  background: linear-gradient(100deg,
     transparent 0%,
     transparent 40%,
     rgba(255, 255, 255, 0.35) 50%,
     rgba(255, 255, 255, 0.12) 56%,
     transparent 62%,
-    transparent 100%
-  );
+    transparent 100%);
   mix-blend-mode: screen;
   animation: sweepBall 3.2s linear infinite;
 }
 @keyframes sweepBall {
-  0% {
-    transform: translateX(-110%);
-  }
-  100% {
-    transform: translateX(110%);
-  }
+  0%   { transform: translateX(-110%); }
+  100% { transform: translateX(110%); }
 }
-
 .discoball-shine {
   position: absolute;
   inset: 0;
   border-radius: 50%;
   background:
-    radial-gradient(
-      circle at 28% 22%,
-      rgba(255, 255, 255, 0.95) 0%,
-      rgba(255, 255, 255, 0.35) 7%,
-      rgba(255, 255, 255, 0.08) 18%,
-      transparent 32%
-    ),
-    radial-gradient(circle at 70% 78%, rgba(0, 0, 0, 0.45) 0%, transparent 40%);
+    radial-gradient(circle at 28% 22%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.35) 7%, rgba(255,255,255,0.08) 18%, transparent 32%),
+    radial-gradient(circle at 70% 78%, rgba(0,0,0,0.45) 0%, transparent 40%);
   pointer-events: none;
 }
-
 .discoball-glints {
   position: absolute;
   inset: 0;
   border-radius: 50%;
   pointer-events: none;
 }
-.discoball-glints::before,
-.discoball-glints::after {
+.discoball-glints::before, .discoball-glints::after {
   content: '';
   position: absolute;
   border-radius: 50%;
   background: #fff;
   width: 2px;
   height: 2px;
-  top: 36%;
-  left: 36%;
+  top: 36%; left: 36%;
   box-shadow:
     14px 22px 0 0.3px #fff,
     -22px 8px 0 0.3px #fff,
@@ -546,8 +569,7 @@
   animation: glintTwinkle 0.9s steps(2, end) infinite;
 }
 .discoball-glints::after {
-  top: 28%;
-  left: 58%;
+  top: 28%; left: 58%;
   animation-delay: 0.45s;
   animation-duration: 1.1s;
   box-shadow:
@@ -561,55 +583,143 @@
     8px 40px 0 0.3px #fff;
 }
 @keyframes glintTwinkle {
-  0%,
-  100% {
-    opacity: 0.15;
-  }
-  50% {
-    opacity: 1;
-    filter: drop-shadow(0 0 3px #fff);
-  }
+  0%, 100% { opacity: 0.15; }
+  50%      { opacity: 1; filter: drop-shadow(0 0 3px #fff); }
 }
 
-/* === DANCE FLOOR GLOW — sits ON TOP of the perspective grid === */
-.dance-floor {
+/* === REFLECTIVE SPOTS — white light bouncing off the ball outward ===
+   The ball is at top:18px + 75px (half height) ≈ y=93. We rotate the
+   whole layer around that point so spots seem to emanate from the ball. */
+.reflective-spots {
   position: absolute;
-  bottom: 0;
+  top: 93px;
   left: 50%;
-  width: 600px;
-  height: 80px;
-  transform: translateX(-50%);
-  background: radial-gradient(
-    ellipse at center 60%,
-    rgba(255, 43, 214, 0.5) 0%,
-    rgba(0, 240, 255, 0.3) 35%,
-    transparent 75%
-  );
-  filter: blur(10px);
-  z-index: 3;
+  width: 0;
+  height: 0;
   pointer-events: none;
-  animation: floorPulse var(--beat-ms) ease-in-out infinite alternate;
+  z-index: 4;
+  animation: spotsRotate 12s linear infinite;
 }
-@keyframes floorPulse {
-  from {
-    opacity: 0.55;
-    transform: translateX(-50%) scaleX(0.92);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) scaleX(1.08);
-  }
+.spot {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  filter: blur(0.5px);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+  transform-origin: 0 0;
+  animation: spotTwinkle 0.9s ease-in-out infinite alternate;
+  will-change: opacity;
+}
+.spot.tinted-pink   { background: rgba(255, 43, 214, 0.85);  box-shadow: 0 0 10px var(--pink); }
+.spot.tinted-cyan   { background: rgba(0, 240, 255, 0.85);   box-shadow: 0 0 10px var(--cyan); }
+.spot.tinted-yellow { background: rgba(255, 242, 0, 0.85);   box-shadow: 0 0 10px var(--yellow); }
+@keyframes spotsRotate { to { transform: rotate(360deg); } }
+@keyframes spotTwinkle {
+  0%, 100% { opacity: 0.2; }
+  50%      { opacity: 1; }
+}
+.stage[data-mood='drop'] .spot { animation-duration: 0.3s !important; }
+.stage[data-mood='hype'] .spot { animation-duration: 0.5s !important; }
+
+/* === DJ LASERS — beams from the DJ stage shooting outward across the floor ===
+   Origin: top of the DJ stage (back centre). They fan outward and downward
+   onto the dance floor, sweep gently, intensify on drops. */
+.dj-lasers {
+  position: absolute;
+  bottom: 36%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: screen;
+}
+.laser {
+  position: absolute;
+  top: -10px;
+  left: -2px;
+  width: 4px;
+  height: 320px;
+  background: linear-gradient(180deg,
+    currentColor 0%,
+    currentColor 50%,
+    transparent 100%);
+  transform-origin: top center;
+  filter: blur(1.5px);
+  opacity: 0.55;
+  animation: laserSweep 5s ease-in-out infinite alternate;
+}
+.laser-pink     { color: var(--pink);    transform: rotate(-95deg);  --rot-from: -95deg;  --rot-to: -110deg; animation-delay: 0s;    }
+.laser-cyan     { color: var(--cyan);    transform: rotate(95deg);   --rot-from: 95deg;   --rot-to: 110deg;  animation-delay: -1s;   }
+.laser-yellow   { color: var(--yellow);  transform: rotate(-115deg); --rot-from: -115deg; --rot-to: -130deg; animation-delay: -1.5s; }
+.laser-green    { color: var(--green);   transform: rotate(115deg);  --rot-from: 115deg;  --rot-to: 130deg;  animation-delay: -2.5s; }
+.laser-orange   { color: var(--orange);  transform: rotate(-145deg); --rot-from: -145deg; --rot-to: -160deg; animation-delay: -3s;   }
+.laser-eggplant { color: var(--eggplant);transform: rotate(145deg);  --rot-from: 145deg;  --rot-to: 160deg;  animation-delay: -3.5s; }
+
+@keyframes laserSweep {
+  0%   { transform: rotate(var(--rot-from)); opacity: 0.4; }
+  50%  { opacity: 0.9; }
+  100% { transform: rotate(var(--rot-to));   opacity: 0.5; }
 }
 
-/* Tablet */
-@media (max-width: 980px) {
-  .stage { height: 320px; }
-  .ball-wrap { width: 130px; height: 130px; }
-  .dance-floor { width: 380px; }
+.stage[data-mood='drop'] .laser {
+  opacity: 1 !important;
+  animation-duration: 0.8s !important;
+  filter: blur(0.6px);
 }
-/* Mobile */
+.stage[data-mood='hype'] .laser {
+  opacity: 0.85 !important;
+  animation-duration: 2.2s !important;
+}
+
+/* === Volumetric haze under the lasers — gives them body === */
+.dj-lasers::after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: -120px;
+  width: 240px;
+  height: 60px;
+  background: radial-gradient(ellipse at center top,
+    rgba(255, 255, 255, 0.15) 0%,
+    transparent 70%);
+  filter: blur(8px);
+  animation: hazePulse var(--beat-ms) ease-in-out infinite alternate;
+}
+@keyframes hazePulse {
+  from { opacity: 0.5; }
+  to   { opacity: 0.85; }
+}
+
+/* === Mobile === */
+@media (max-width: 1100px) {
+  .speaker.stack-l { left:  calc(50% - 160px); }
+  .speaker.stack-r { right: calc(50% - 160px); }
+  .dj-stage { width: 220px; }
+  .bar { width: 200px; }
+}
+@media (max-width: 880px) {
+  .stage { height: 420px; }
+  .speaker { width: 46px; height: 100px; }
+  .speaker::before { width: 32px; height: 32px; }
+  .speaker::after  { width: 22px; height: 22px; top: 56px; }
+  .speaker.stack-l { left:  calc(50% - 130px); }
+  .speaker.stack-r { right: calc(50% - 130px); }
+  .dj-stage { width: 180px; height: 72px; }
+  .dj-pult { width: 160px; height: 40px; }
+  .deck { width: 24px; height: 24px; top: 8px; }
+  .deck::after { width: 6px; height: 6px; }
+  .mixer { width: 60px; height: 22px; }
+  .bar { width: 170px; height: 200px; }
+  .ball-wrap { width: 120px; height: 120px; }
+}
 @media (max-width: 720px) {
-  .stage { height: 280px; }
+  .stage { height: 360px; }
+  .speaker { display: none; }
+  .bar { width: 130px; }
   .ball-wrap { width: 96px; height: 96px; }
-  .dance-floor { width: 260px; }
+  .dj-stage { width: 160px; height: 60px; }
+  .dj-pult { width: 140px; height: 32px; }
 }

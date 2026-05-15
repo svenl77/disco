@@ -17,7 +17,7 @@
  */
 
 export type Mood = 'idle' | 'hype' | 'drop' | 'acid' | 'start';
-export type BoyId = 'pepe' | 'eggplant' | 'maus' | 'burns' | 'hippie';
+export type BoyId = 'pepe' | 'eggplant' | 'maus' | 'burns' | 'landwulf';
 
 type SpruechePool = Record<Mood, string[]>;
 type AllSprueche = Record<BoyId, SpruechePool>;
@@ -164,7 +164,7 @@ export const SPRUECHE: AllSprueche = {
     acid: ['oh my', 'colors of money', 'I see the rich vibrations', 'gold dust everywhere'],
     start: ['ahhh, finally', 'pour me one', 'shall we dance', 'the night begins'],
   },
-  hippie: {
+  landwulf: {
     idle: [
       'peace and love',
       'good energy',
@@ -193,7 +193,7 @@ export const SPRUECHE: AllSprueche = {
 };
 
 const lastShown: Record<BoyId, string> = {
-  pepe: '', eggplant: '', maus: '', burns: '', hippie: '',
+  pepe: '', eggplant: '', maus: '', burns: '', landwulf: '',
 };
 
 /** Pick a random sprueche for a boy in a given mood; avoid immediate repeats. */

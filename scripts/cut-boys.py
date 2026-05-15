@@ -22,18 +22,19 @@ from PIL import Image
 from huggingface_hub import hf_hub_download
 
 ROOT = Path(__file__).resolve().parent.parent
-SOURCE = ROOT / "assets" / "boys" / "image.png"  # Clean line-up, 1536x1024, dark gradient bg
+SOURCE = ROOT / "assets" / "boys" / "lineup-v2.png"  # Clean line-up v2, 1536x1024, full bodies
 OUT_DIR = ROOT / "public" / "boys"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
-# Bounding boxes for the 1536x1024 clean line-up image.
-# Each boy is clearly separated; dark background is easy for RMBG to remove.
+# Bounding boxes for the 1536x1024 line-up v2.
+# Note: "landwulf" replaces the old "hippie" id — the orange-bearded character
+# is Landwolf from the original Boys Club comic by Matt Furie.
 BOYS: list[tuple[str, tuple[int, int, int, int]]] = [
-    ("pepe",     (80,   90, 380, 980)),
-    ("eggplant", (380,  60, 670, 990)),
-    ("maus",     (700, 100, 880, 990)),
-    ("burns",    (920, 100, 1170, 990)),
-    ("hippie",   (1190, 50, 1530, 990)),
+    ("pepe",     (50,  60,  370, 990)),
+    ("eggplant", (320, 50,  640, 1010)),
+    ("maus",     (610, 80,  870, 990)),
+    ("burns",    (860, 90,  1170, 990)),
+    ("landwulf", (1140, 60, 1510, 990)),
 ]
 
 MODEL_INPUT = 1024  # RMBG-1.4 expects 1024x1024

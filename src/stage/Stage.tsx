@@ -1,3 +1,22 @@
+/**
+ * The stage. Composed of zones, each with its own role:
+ *
+ *   .room-back   — back wall + ceiling neon strip
+ *   .dj-stage    — raised platform, centre back, $DISCO is DJ on top
+ *   .dj-pult     — turntable/mixer in front of the DJ
+ *   .speakers    — flank the stage, pulse on beat
+ *   .bar         — counter on the right, bottles + stool
+ *   .floor-3d    — perspective dance floor with neon grid
+ *   .dj-lasers   — colored beams from the booth sweeping across the floor
+ *   .reflective-spots — small white spots radiating from the ball
+ *   .ball        — disco ball overhead
+ *   .boys-zones  — the five boys in their respective zones
+ *   .bubble-layer — comic speech bubbles
+ *
+ * Light direction is consistent: beams originate at the DJ booth (back), hit
+ * the disco ball, and the ball scatters white reflective spots in all
+ * directions — the way a real disco room works.
+ */
 import { For } from 'solid-js';
 import { DiscoBall } from './DiscoBall';
 import { Boys } from '../boys/Boys';
@@ -5,14 +24,13 @@ import { BubbleLayer } from '../bubbles/BubbleLayer';
 import { mood } from '../state';
 import './stage.css';
 
-// 36 reflective light spots arranged in a ring radiating from the ball
-const SPOT_COUNT = 36;
+// 32 reflective light spots arranged in a ring around the disco ball
+const SPOT_COUNT = 32;
 const SPOT_TINTS = ['', 'tinted-pink', 'tinted-cyan', '', 'tinted-yellow', '', ''];
 
 function spotStyle(i: number) {
   const angle = (i / SPOT_COUNT) * 360;
-  // Variable radius so spots cover wall + floor, not a perfect circle
-  const radius = 180 + ((i * 53) % 240);
+  const radius = 200 + ((i * 53) % 260);
   return {
     transform: `rotate(${angle}deg) translate(${radius}px) rotate(${-angle}deg)`,
     'animation-delay': `${(i * 0.07) % 1.2}s`,
@@ -23,24 +41,43 @@ function spotStyle(i: number) {
 export function Stage() {
   return (
     <section class="stage" aria-label="Boys Club Disco stage" data-mood={mood()}>
-      {/* Back wall + DJ setup */}
+      {/* Back wall + ceiling */}
       <div class="room-back" />
-      <div class="dj-booth" />
-      <div class="speaker left" />
-      <div class="speaker right" />
 
-      {/* Perspective floor with neon grid */}
-      <div class="floor-3d" />
+      {/* DJ stage at back centre — raised platform, decks, speakers */}
+      <div class="dj-stage">
+        <div class="dj-pult">
+          <div class="deck deck-l" />
+          <div class="deck deck-r" />
+          <div class="mixer" />
+          <div class="dj-label">$DISCO</div>
+        </div>
+      </div>
+      <div class="speaker stack-l" />
+      <div class="speaker stack-r" />
 
-      {/* DJ laser beams aimed at the ball */}
-      <div class="dj-lasers">
-        <div class="laser laser-1" />
-        <div class="laser laser-2" />
-        <div class="laser laser-3" />
-        <div class="laser laser-4" />
+      {/* The bar on the right side */}
+      <div class="bar">
+        <div class="bar-bottles" />
+        <div class="bar-counter" />
+        <div class="bar-stool" />
+        <div class="bar-glow" />
       </div>
 
-      {/* Reflective light spots over wall + floor */}
+      {/* Perspective dance floor grid */}
+      <div class="floor-3d" />
+
+      {/* DJ lasers — sweep across the dance floor from the booth */}
+      <div class="dj-lasers">
+        <div class="laser laser-pink" />
+        <div class="laser laser-cyan" />
+        <div class="laser laser-yellow" />
+        <div class="laser laser-green" />
+        <div class="laser laser-orange" />
+        <div class="laser laser-eggplant" />
+      </div>
+
+      {/* Reflective spots — white light bounces off the disco ball outward */}
       <div class="reflective-spots">
         <For each={Array.from({ length: SPOT_COUNT })}>
           {(_, i) => (
@@ -53,7 +90,7 @@ export function Stage() {
       </div>
 
       <DiscoBall />
-      <div class="dance-floor" />
+      <div class="dance-floor-glow" />
       <Boys />
       <BubbleLayer />
     </section>
