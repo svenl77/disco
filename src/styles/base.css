@@ -53,10 +53,11 @@ input[type='range'] {
   padding: 14px 12px 4px;
 }
 .app-title {
-  font-size: clamp(28px, 6vw, 56px);
+  font-size: clamp(26px, 5vw, 48px);
   font-weight: 900;
-  letter-spacing: 6px;
+  letter-spacing: 4px;
   margin: 0;
+  white-space: nowrap;
   background: linear-gradient(90deg, var(--pink), var(--yellow), var(--cyan), var(--green), var(--pink));
   background-size: 200% auto;
   -webkit-background-clip: text;

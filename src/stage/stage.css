@@ -2,7 +2,7 @@
 .stage {
   position: relative;
   width: 100%;
-  height: 320px;
+  height: 380px;
   overflow: hidden;
   background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.45) 100%);
   border-top: 2px solid rgba(255, 43, 214, 0.3);
@@ -32,11 +32,11 @@
 /* === DISCO BALL === */
 .ball-wrap {
   position: absolute;
-  top: 6px;
+  top: 10px;
   left: 50%;
   transform: translateX(-50%);
-  width: 128px;
-  height: 128px;
+  width: 160px;
+  height: 160px;
   z-index: 3;
   pointer-events: none;
 }
@@ -53,10 +53,10 @@
 
 .ball-beams {
   position: absolute;
-  top: -120px;
-  left: -200px;
-  width: 528px;
-  height: 380px;
+  top: -140px;
+  left: -240px;
+  width: 640px;
+  height: 460px;
   pointer-events: none;
   background: conic-gradient(
     from 0deg at 50% 32%,
@@ -91,18 +91,18 @@
   mix-blend-mode: screen;
   animation: beamsRotate 14s linear infinite;
   -webkit-mask-image: radial-gradient(
-    ellipse 64px 64px at 50% 32%,
+    ellipse 80px 80px at 50% 32%,
     transparent 0,
-    transparent 60px,
-    #000 70px,
+    transparent 78px,
+    #000 88px,
     #000 60%,
     transparent 100%
   );
   mask-image: radial-gradient(
-    ellipse 64px 64px at 50% 32%,
+    ellipse 80px 80px at 50% 32%,
     transparent 0,
-    transparent 60px,
-    #000 70px,
+    transparent 78px,
+    #000 88px,
     #000 60%,
     transparent 100%
   );
@@ -275,8 +275,8 @@
   position: absolute;
   bottom: -6px;
   left: 50%;
-  width: 360px;
-  height: 44px;
+  width: 460px;
+  height: 48px;
   transform: translateX(-50%);
   background: radial-gradient(
     ellipse at center,
@@ -300,16 +300,15 @@
   }
 }
 
+/* Tablet */
+@media (max-width: 980px) {
+  .stage { height: 320px; }
+  .ball-wrap { width: 130px; height: 130px; }
+  .dance-floor { width: 380px; }
+}
 /* Mobile */
 @media (max-width: 720px) {
-  .stage {
-    height: 280px;
-  }
-  .ball-wrap {
-    width: 96px;
-    height: 96px;
-  }
-  .dance-floor {
-    width: 260px;
-  }
+  .stage { height: 280px; }
+  .ball-wrap { width: 96px; height: 96px; }
+  .dance-floor { width: 260px; }
 }

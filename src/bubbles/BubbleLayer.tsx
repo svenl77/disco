@@ -99,6 +99,10 @@ function SpeechBubble(props: { bubble: Bubble }) {
   const padding = 6;
   const side = () => props.bubble.side;
 
+  // Vertical position: center boy is biggest so its bubble sits highest.
+  // Side boys are slightly lower because they're smaller and bubbles look balanced.
+  const bottomPct = () => (idx() === 2 ? 70 : idx() === 1 || idx() === 3 ? 62 : 56);
+
   return (
     <div
       class="bubble"
@@ -106,7 +110,7 @@ function SpeechBubble(props: { bubble: Bubble }) {
       data-boy={props.bubble.boyId}
       style={{
         left: `${xPercent()}%`,
-        bottom: '46%',
+        bottom: `${bottomPct()}%`,
         transform: 'translateX(-50%)',
         width: `${w() + padding * 2}px`,
         height: `${h + tailH}px`,
