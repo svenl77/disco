@@ -15,6 +15,17 @@
   padding: 0 12px;
 }
 
+/* All boys jump on drop */
+.stage[data-mood='drop'] .boy {
+  animation: jumpAll 0.55s ease-out !important;
+}
+@keyframes jumpAll {
+  0%   { transform: translateY(0) rotate(-4deg); }
+  30%  { transform: translateY(-28px) rotate(0); }
+  60%  { transform: translateY(-10px) rotate(4deg); }
+  100% { transform: translateY(0) rotate(-4deg); }
+}
+
 .boy {
   position: relative;
   transform-origin: 50% 92%;

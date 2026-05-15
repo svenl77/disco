@@ -69,9 +69,7 @@ export const BOYS: BoyDef[] = [
   },
 ];
 
-// Path to a boy's PNG asset. Returns null if we don't have it yet.
-export function boyImage(_id: string): string | null {
-  // Vite turns /public/* into root URLs. We'll plug in actual files later.
-  // Returning null = use placeholder SVG.
-  return null;
+/** Resolve a boy's PNG asset. Vite serves /public/* at root. */
+export function boyImage(id: string): string {
+  return `/boys/${id}.png`;
 }

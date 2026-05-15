@@ -6,7 +6,7 @@
  *
  * The center boy is the "main" and triggers a DROP when clicked.
  */
-import { For, Show } from 'solid-js';
+import { For } from 'solid-js';
 import { BOYS, boyImage } from './boys-data';
 import { triggerDrop } from '../state';
 import './boys.css';
@@ -50,9 +50,20 @@ function Boy(props: { boy: (typeof BOYS)[number]; idx: number }) {
       aria-label={`${props.boy.name} — click to drop`}
       tabIndex={0}
     >
-      <Show when={img()} fallback={<PlaceholderBoy color={props.boy.color} accent={props.boy.accent} />}>
-        <img class="boy-img" src={img()!} alt={props.boy.name} draggable={false} />
-      </Show>
+      <img
+        class="boy-img"
+        src={img()}
+        alt={props.boy.name}
+        draggable={false}
+        onError={(e) => {
+          // Fallback to placeholder SVG if PNG missing.
+          (e.currentTarget as HTMLImageElement).style.display = 'none';
+          (e.currentTarget.nextElementSibling as HTMLElement | null)?.removeAttribute('hidden');
+        }}
+      />
+      <span hidden>
+        <PlaceholderBoy color={props.boy.color} accent={props.boy.accent} />
+      </span>
     </div>
   );
 }

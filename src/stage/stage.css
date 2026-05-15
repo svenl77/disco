@@ -8,6 +8,16 @@
   border-top: 2px solid rgba(255, 43, 214, 0.3);
   border-bottom: 2px solid rgba(0, 240, 255, 0.3);
   contain: strict;
+  transition: filter 0.4s ease;
+}
+.stage[data-mood='acid'] {
+  filter: hue-rotate(-30deg) saturate(1.4) brightness(1.05);
+}
+.stage[data-mood='drop'] {
+  filter: brightness(1.3) saturate(1.3);
+}
+.stage[data-mood='hype'] {
+  filter: brightness(1.1);
 }
 
 .stage-canvas {
