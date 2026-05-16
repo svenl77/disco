@@ -885,9 +885,11 @@
 .stage[data-mood='drop'] .spot { animation-duration: 0.3s !important; }
 .stage[data-mood='hype'] .spot { animation-duration: 0.5s !important; }
 
-/* === DJ LASERS — beams from each speaker, cross pattern, beat-reactive ===
-   Each speaker (left & right) shoots 3 beams across the room. They sweep
-   gently in alternate directions, opacity pulses on every beat. */
+/* === DJ LASERS — ceiling-mounted projectors at TOP corners of the stage.
+   Each projector fires 3 colored beams that fan downward across the floor.
+   Sweep speed + opacity are both tied to var(--beat-ms) so they "dance"
+   with the music — every bar the beams swing across the room, every beat
+   they flash brighter. */
 .dj-lasers {
   position: absolute;
   inset: 0;
@@ -895,83 +897,142 @@
   z-index: 1;
   mix-blend-mode: screen;
 }
-/* A laser station — anchored at the top of one speaker.
-   Position with calc(50% +/- 200px) to match speaker positions. */
+
+/* A laser station — a small projector device mounted at a top corner */
 .laser-station {
   position: absolute;
-  bottom: 41%;
-  width: 0;
-  height: 0;
-  filter: blur(0.8px);
+  top: 8px;
+  width: 22px;
+  height: 14px;
+  background: linear-gradient(180deg, #2a2a35 0%, #0a0a0e 100%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 3px 3px 6px 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+  filter: blur(0.2px);
 }
-.laser-station.left  { left:  calc(50% - 200px); }
-.laser-station.right { right: calc(50% - 200px); left: auto; }
+.laser-station.left  { left:  4%; }
+.laser-station.right { right: 4%; left: auto; }
+
+/* A tiny lens on the underside of the projector */
+.laser-station::before {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 6px;
+  background: radial-gradient(ellipse at center top,
+    rgba(255, 255, 255, 0.6) 0%,
+    rgba(0, 0, 0, 0.8) 70%);
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(255, 43, 214, 0.5);
+  animation: lensGlow var(--beat-ms) ease-in-out infinite alternate;
+}
+@keyframes lensGlow {
+  from { box-shadow: 0 0 4px rgba(255, 43, 214, 0.4); }
+  to   { box-shadow: 0 0 12px rgba(255, 43, 214, 0.9), 0 0 18px rgba(0, 240, 255, 0.5); }
+}
 
 .laser {
   position: absolute;
-  top: 0;
-  left: -2px;
+  top: 14px;     /* origin at projector lens, below the housing */
+  left: 11px;    /* centred on the 22px-wide station */
   width: 4px;
-  height: 480px;
+  height: 600px; /* long enough to reach the dance floor and beyond */
   background: linear-gradient(180deg,
-    transparent 0%,
-    currentColor 10%,
-    currentColor 80%,
+    currentColor 0%,
+    currentColor 35%,
+    color-mix(in srgb, currentColor 40%, transparent) 80%,
     transparent 100%);
+  transform: translateX(-2px) rotate(var(--rot-base));
   transform-origin: top center;
-  opacity: 0.55;
+  opacity: 0.5;
+  filter: blur(1.2px);
   animation:
-    laserSweep 4.5s ease-in-out infinite alternate,
+    laserSweep calc(var(--beat-ms) * 8) ease-in-out infinite alternate,
     laserPulse var(--beat-ms) ease-in-out infinite alternate;
   will-change: transform, opacity;
 }
-/* Left speaker fires beams toward the right side (positive rotations) */
-.laser-station.left .laser-a { color: var(--pink);   transform: rotate(35deg);  --rot-from: 25deg;  --rot-to: 50deg; animation-delay: 0s, 0s; }
-.laser-station.left .laser-b { color: var(--cyan);   transform: rotate(55deg);  --rot-from: 45deg;  --rot-to: 70deg; animation-delay: -1.5s, -0.1s; }
-.laser-station.left .laser-c { color: var(--yellow); transform: rotate(75deg);  --rot-from: 65deg;  --rot-to: 90deg; animation-delay: -3s, -0.2s; }
-/* Right speaker fires beams toward the left side (negative rotations) */
-.laser-station.right .laser-a { color: var(--green);   transform: rotate(-35deg); --rot-from: -25deg; --rot-to: -50deg; animation-delay: 0s, -0.05s; }
-.laser-station.right .laser-b { color: var(--orange);  transform: rotate(-55deg); --rot-from: -45deg; --rot-to: -70deg; animation-delay: -1.5s, -0.15s; }
-.laser-station.right .laser-c { color: var(--eggplant);transform: rotate(-75deg); --rot-from: -65deg; --rot-to: -90deg; animation-delay: -3s, -0.25s; }
+
+/* CSS rotation is clockwise from a down-pointing bar — so to fan a beam
+   from the LEFT projector DOWN-RIGHT (into the room) we use NEGATIVE
+   angles (counter-clockwise from straight-down), and vice versa. */
+
+/* Left projector — beams fan DOWN-RIGHT (counter-clockwise from down) */
+.laser-station.left .laser-a {
+  color: var(--pink);
+  --rot-base: -20deg; --rot-from: -8deg;  --rot-to: -38deg;
+  animation-delay: 0s, 0s;
+}
+.laser-station.left .laser-b {
+  color: var(--cyan);
+  --rot-base: -35deg; --rot-from: -22deg; --rot-to: -55deg;
+  animation-delay: -300ms, -50ms;
+}
+.laser-station.left .laser-c {
+  color: var(--yellow);
+  --rot-base: -50deg; --rot-from: -40deg; --rot-to: -75deg;
+  animation-delay: -600ms, -100ms;
+}
+
+/* Right projector — beams fan DOWN-LEFT (clockwise from down) */
+.laser-station.right .laser-a {
+  color: var(--green);
+  --rot-base: 20deg; --rot-from: 8deg;  --rot-to: 38deg;
+  animation-delay: -100ms, -25ms;
+}
+.laser-station.right .laser-b {
+  color: var(--orange);
+  --rot-base: 35deg; --rot-from: 22deg; --rot-to: 55deg;
+  animation-delay: -400ms, -75ms;
+}
+.laser-station.right .laser-c {
+  color: var(--eggplant);
+  --rot-base: 50deg; --rot-from: 40deg; --rot-to: 75deg;
+  animation-delay: -700ms, -125ms;
+}
 
 @keyframes laserSweep {
-  0%   { transform: rotate(var(--rot-from)); }
-  100% { transform: rotate(var(--rot-to)); }
+  0%   { transform: translateX(-2px) rotate(var(--rot-from)); }
+  100% { transform: translateX(-2px) rotate(var(--rot-to)); }
 }
-/* Beat reactivity — opacity flashes on every beat */
+/* Every beat: opacity flash */
 @keyframes laserPulse {
-  0%, 100% { opacity: 0.35; }
-  50%      { opacity: 0.9; }
+  0%, 100% { opacity: 0.3; }
+  50%      { opacity: 0.95; }
 }
 
+/* On drops: lasers go wild — sweep twice as fast, full opacity */
 .stage[data-mood='drop'] .laser {
   opacity: 1 !important;
-  animation-duration: 0.8s, 0.08s !important;
-  filter: brightness(1.4);
+  animation-duration: calc(var(--beat-ms) * 2), calc(var(--beat-ms) * 0.5) !important;
+  filter: blur(0.6px) brightness(1.5);
 }
 .stage[data-mood='hype'] .laser {
-  animation-duration: 1.8s, var(--beat-ms) !important;
+  animation-duration: calc(var(--beat-ms) * 4), var(--beat-ms) !important;
 }
 .stage[data-mood='acid'] .laser {
-  filter: hue-rotate(60deg);
+  filter: blur(1.2px) hue-rotate(60deg);
 }
 
-/* === Volumetric haze around each speaker — laser fog === */
+/* Soft glow halo around each projector lens */
 .laser-station::after {
   content: '';
   position: absolute;
-  top: -6px;
-  left: -80px;
-  width: 160px;
-  height: 80px;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 48px;
+  height: 24px;
   background: radial-gradient(ellipse at center top,
-    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 255, 255, 0.16) 0%,
     transparent 70%);
-  filter: blur(10px);
+  filter: blur(8px);
   animation: hazePulse calc(var(--beat-ms) * 2) ease-in-out infinite alternate;
 }
 @keyframes hazePulse {
-  from { opacity: 0.4; }
+  from { opacity: 0.3; }
   to   { opacity: 0.9; }
 }
 
