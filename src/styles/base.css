@@ -77,10 +77,88 @@ input[type='range'] {
 @keyframes titleShine { to { background-position: 200% center; } }
 
 .app-footer {
-  text-align: center;
-  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 16px clamp(12px, 3vw, 32px);
   font-size: 11px;
   letter-spacing: 2px;
   color: rgba(255, 255, 255, 0.45);
+  flex-wrap: wrap;
 }
 .app-footer a { color: var(--pink); text-decoration: none; }
+
+.footer-left { flex: 1 1 auto; }
+
+.footer-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 0 0 auto;
+}
+
+/* X (Twitter) link */
+.footer-x {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.85) !important;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.footer-x:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+.footer-x svg { display: block; }
+
+/* CA copy-pill */
+.footer-ca {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 240, 255, 0.4);
+  background: rgba(0, 240, 255, 0.06);
+  color: var(--cyan);
+  font-family: inherit;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.footer-ca:hover {
+  background: rgba(0, 240, 255, 0.14);
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
+  border-color: var(--cyan);
+}
+.footer-ca-label {
+  color: var(--pink);
+  font-weight: 900;
+  text-shadow: 0 0 4px rgba(255, 43, 214, 0.5);
+}
+.footer-ca-addr {
+  font-family: 'Courier New', ui-monospace, monospace;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.85);
+}
+.footer-ca-copy {
+  font-size: 12px;
+  letter-spacing: 0;
+}
+
+@media (max-width: 720px) {
+  .app-footer { justify-content: center; text-align: center; }
+  .footer-left { flex-basis: 100%; }
+}
