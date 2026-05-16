@@ -18,7 +18,7 @@ import {
   setPatternBank,
   setPatternsVersion,
 } from '../state';
-import { decodeSet, downloadJSON, shareURL, type DiscoSet } from './serialize';
+import { decodeSet, shareURL, type DiscoSet } from './serialize';
 import './share.css';
 
 export function ShareBar() {
@@ -39,11 +39,6 @@ export function ShareBar() {
     } catch {
       window.prompt('Copy this share URL', url);
     }
-  }
-
-  function saveJson() {
-    downloadJSON(buildSet());
-    showFlash('SAVED ⬇');
   }
 
   async function pasteLoad() {
@@ -80,11 +75,13 @@ export function ShareBar() {
   return (
     <div class="share-bar">
       <button class="share-btn" onClick={copyLink}>🔗 SHARE</button>
-      <button class="share-btn" onClick={saveJson}>⬇ SAVE</button>
       <button class="share-btn" onClick={pasteLoad}>📋 LOAD</button>
       {flash() && <span class="share-flash">{flash()}</span>}
     </div>
   );
+  // SAVE removed — SHARE copies a URL containing the full song to the
+  // clipboard, and LOAD reads a URL or JSON from clipboard. No need for a
+  // separate file download.
 }
 
 /** Apply a decoded set to the global state */

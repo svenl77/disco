@@ -32,23 +32,65 @@
 }
 .music-tab:hover { transform: translateY(-2px); }
 
-/* === EASY panel === */
+/* === EASY panel === slim, one-glance layout */
 .easy-panel {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px;
   background: linear-gradient(180deg, rgba(40, 0, 80, 0.55), rgba(20, 0, 40, 0.85));
   border: 1px solid rgba(255, 43, 214, 0.3);
   border-radius: 14px;
-  padding: 18px;
+  padding: 12px 16px 14px;
   box-shadow: 0 0 18px rgba(255, 43, 214, 0.12);
 }
 
-.easy-row {
+/* CTA heading at the top of the easy panel */
+.easy-cta {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding-bottom: 2px;
+}
+.easy-cta-title {
+  font-size: 13px;
+  letter-spacing: 4px;
+  font-weight: 900;
+  color: var(--pink);
+  text-shadow: 0 0 8px rgba(255, 43, 214, 0.55);
+  text-transform: uppercase;
+}
+.easy-cta-sub {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: rgba(255, 255, 255, 0.55);
+  text-transform: lowercase;
+}
+
+/* Controls row — DROP + SHUFFLE on the left, TEMPO inline on the right */
+.easy-controls {
+  display: flex;
+  align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 14px;
   justify-content: center;
+}
+.easy-bpm {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1 1 200px;
+  min-width: 180px;
+  justify-content: flex-end;
+}
+.easy-bpm input[type='range'] {
+  flex: 1 1 auto;
+  min-width: 90px;
+  max-width: 240px;
+}
+@media (max-width: 720px) {
+  .easy-controls { gap: 10px; }
+  .easy-bpm { width: 100%; justify-content: center; }
 }
 
 .big-btn {
@@ -58,12 +100,13 @@
   border: 2px solid currentColor;
   background: rgba(0, 0, 0, 0.5);
   color: var(--cyan);
-  padding: 12px 24px;
-  border-radius: 12px;
-  font-size: 15px;
+  padding: 9px 18px;
+  border-radius: 10px;
+  font-size: 13px;
   text-transform: uppercase;
-  box-shadow: 0 0 12px currentColor;
+  box-shadow: 0 0 10px currentColor;
   transition: transform 0.1s ease, box-shadow 0.15s ease;
+  white-space: nowrap;
 }
 .big-btn:hover { transform: translateY(-2px); box-shadow: 0 0 22px currentColor; }
 .big-btn:active { transform: translateY(0) scale(0.97); }
@@ -143,14 +186,14 @@
   background: linear-gradient(180deg, rgba(20, 0, 40, 0.85), rgba(8, 0, 20, 0.95));
   border: 1px solid rgba(0, 240, 255, 0.3);
   border-radius: 12px;
-  padding: 12px;
+  padding: 8px 12px 10px;
   box-shadow: inset 0 0 14px rgba(0, 240, 255, 0.12);
 }
 .timeline-head {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 .timeline-play {
   width: 38px;

@@ -54,17 +54,21 @@ export function MusicPanel() {
 function EasyPanel() {
   return (
     <div class="easy-panel">
-      <TimelineView editable={false} />
-
-      <div class="easy-row">
-        <button class="big-btn drop" onClick={() => void triggerDrop()}>🚀 DROP</button>
-        <button class="big-btn rand" onClick={randomizeEditing}>🎲 SHUFFLE</button>
+      <div class="easy-cta">
+        <span class="easy-cta-title">CREATE YOUR DISCO HIT</span>
+        <span class="easy-cta-sub">tap blocks to switch · ▶ to play · 🚀 to drop</span>
       </div>
 
-      <div class="bpm-row">
-        <label class="bpm-label">TEMPO</label>
-        <input type="range" min="80" max="160" value={bpm()} onInput={(e) => setBpmValue(+e.currentTarget.value)} />
-        <span class="bpm-val">{bpm()} BPM</span>
+      <TimelineView editable={false} />
+
+      <div class="easy-controls">
+        <button class="big-btn drop" onClick={() => void triggerDrop()}>🚀 DROP</button>
+        <button class="big-btn rand" onClick={randomizeEditing}>🎲 SHUFFLE</button>
+        <div class="easy-bpm">
+          <label class="bpm-label">TEMPO</label>
+          <input type="range" min="80" max="160" value={bpm()} onInput={(e) => setBpmValue(+e.currentTarget.value)} />
+          <span class="bpm-val">{bpm()} BPM</span>
+        </div>
       </div>
     </div>
   );
