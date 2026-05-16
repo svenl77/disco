@@ -416,8 +416,12 @@ export function createNewRecord(): void {
   addSongSlot(target, 4);
   setEditingPatternId(target);
   setMusicTab('studio');
-  // Jump playback to the new slot so the user immediately hears it (silent)
-  // and the sequencer's playhead is in the right place when they hit play
+  // Composing flow: switch to LOOP mode so the new (empty) pattern loops on
+  // its own. The user hears their edits immediately on repeat. They can
+  // flip back to SONG mode when they want to hear the new pattern in
+  // context of the arrangement.
+  setPlaybackMode('pattern');
+  // Jump playback to the new slot so the song cursor + UI highlight match
   const newSlotIndex = song().length - 1;
   jumpToSongSlot(newSlotIndex);
 }
