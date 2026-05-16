@@ -21,6 +21,9 @@ import {
   isPlaying,
   togglePlay,
   createNewRecord,
+  playbackMode,
+  setPlaybackMode,
+  editingPatternId,
 } from '../state';
 import { PATTERN_COLORS, PATTERN_IDS, type PatternId } from '../audio/song';
 
@@ -31,12 +34,34 @@ interface Props {
 
 export function TimelineView(props: Props) {
   return (
-    <div class="timeline-wrap">
+    <div class="timeline-wrap" data-mode={playbackMode()}>
       <div class="timeline-head">
         <button class="timeline-play" classList={{ playing: isPlaying() }} onClick={togglePlay}>
           {isPlaying() ? '⏸' : '▶'}
         </button>
         <div class="timeline-label">SONG</div>
+
+        {/* Loop-mode switch — toggle between full song and pattern-only loop.
+            In 'pattern' mode the song timeline dims and the editing record loops. */}
+        <div class="loop-switch" role="group" aria-label="Playback mode">
+          <button
+            class="loop-switch-opt"
+            classList={{ active: playbackMode() === 'song' }}
+            onClick={() => setPlaybackMode('song')}
+            title="Play through the song timeline"
+          >
+            🎵 SONG
+          </button>
+          <button
+            class="loop-switch-opt"
+            classList={{ active: playbackMode() === 'pattern' }}
+            onClick={() => setPlaybackMode('pattern')}
+            title="Loop the editing pattern only — for composing"
+          >
+            🔁 LOOP
+          </button>
+        </div>
+
         <div class="timeline-info">
           {song().length} blocks · {song().reduce((sum, s) => sum + s.bars, 0)} bars
         </div>
@@ -49,7 +74,13 @@ export function TimelineView(props: Props) {
               index={i()}
               patternId={slot.patternId}
               bars={slot.bars}
-              isPlaying={playingSlotIndex() === i() && isPlaying()}
+              isPlaying={
+                isPlaying() && (
+                  playbackMode() === 'pattern'
+                    ? slot.patternId === editingPatternId()
+                    : playingSlotIndex() === i()
+                )
+              }
               editable={props.editable ?? false}
             />
           )}

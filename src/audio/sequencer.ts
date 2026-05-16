@@ -8,6 +8,8 @@ const STEPS = 16;
 /** Callback the UI subscribes to so it can render the playhead. */
 export type SongCallback = (info: { slotIndex: number; barInSlot: number; step: number; patternId: PatternId; time: number }) => void;
 
+export type PlaybackMode = 'song' | 'pattern';
+
 export class Sequencer {
   bpm = 120;
   isPlaying = false;
@@ -25,6 +27,14 @@ export class Sequencer {
   song: Song = [];
   /** Which pattern ID is currently sounding */
   currentPatternId: PatternId = 'A';
+
+  /** How playback advances:
+   *    'song'    — cycle through `song` slots at each bar boundary (default)
+   *    'pattern' — loop the editing pattern only, don't advance song
+   *  Set externally from state.ts when the UI toggle changes. */
+  mode: PlaybackMode = 'song';
+  /** Which pattern to loop while mode === 'pattern' */
+  editingPatternId: PatternId = 'A';
 
   onStep: StepCallback | null = null;
   onSong: SongCallback | null = null;
@@ -49,8 +59,13 @@ export class Sequencer {
     this.isPlaying = true;
     this.currentStep = 0;
     this.barInSlot = 0;
-    this.songIndex = 0;
-    this.loadSlot(0);
+    if (this.mode === 'pattern') {
+      // Loop the editing pattern; don't touch the song cursor
+      this.loadEditingPattern();
+    } else {
+      this.songIndex = 0;
+      this.loadSlot(0);
+    }
     this.nextNoteTime = this.audio.ctx.currentTime + 0.05;
     this.tick();
   }
@@ -87,6 +102,14 @@ export class Sequencer {
     this.currentPatternId = slot.patternId;
   }
 
+  /** Pattern-loop mode: ignore song, play the editing pattern */
+  loadEditingPattern(): void {
+    const entry = this.bank[this.editingPatternId];
+    if (!entry) return;
+    this.patterns = entry.patterns;
+    this.currentPatternId = this.editingPatternId;
+  }
+
   /** Replace the editable patterns for a given pattern ID */
   writePattern(id: PatternId, patterns: Patterns): void {
     if (this.bank[id]) this.bank[id].patterns = patterns;
@@ -105,14 +128,21 @@ export class Sequencer {
       const stepDur = this.stepDur();
       this.nextNoteTime += stepDur;
       this.currentStep = (this.currentStep + 1) % STEPS;
-      // Bar boundary: when wrap to 0
+      // Bar boundary
       if (this.currentStep === 0) {
         this.barInSlot += 1;
-        const slot = this.song[this.songIndex];
-        if (slot && this.barInSlot >= slot.bars) {
-          this.barInSlot = 0;
-          this.songIndex = (this.songIndex + 1) % this.song.length;
-          this.loadSlot(this.songIndex);
+        if (this.mode === 'pattern') {
+          // Pattern loop — never advance song. Just re-load the editing
+          // pattern in case the user switched bank slot while playing.
+          this.loadEditingPattern();
+        } else {
+          // Song mode — advance through the timeline
+          const slot = this.song[this.songIndex];
+          if (slot && this.barInSlot >= slot.bars) {
+            this.barInSlot = 0;
+            this.songIndex = (this.songIndex + 1) % this.song.length;
+            this.loadSlot(this.songIndex);
+          }
         }
       }
     }

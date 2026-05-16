@@ -9,9 +9,9 @@
  *  - sequencer plays through `song`, hot-loading the appropriate pattern at
  *    each bar boundary
  */
-import { createSignal, createMemo } from 'solid-js';
+import { createSignal, createMemo, createEffect } from 'solid-js';
 import { AudioEngine } from './audio/engine';
-import { Sequencer } from './audio/sequencer';
+import { Sequencer, type PlaybackMode } from './audio/sequencer';
 import { PRESETS } from './audio/presets';
 import type { Patterns } from './audio/types';
 import {
@@ -62,6 +62,12 @@ export const [editingPatternId, setEditingPatternId] = createSignal<PatternId>('
  *  'studio' adds the pattern bank + 16-step editor + chord pads). Lifted to
  *  global state so actions like createNewRecord() can switch to Studio. */
 export const [musicTab, setMusicTab] = createSignal<'easy' | 'studio'>('easy');
+
+/** Playback mode:
+ *    'song'    = cycle the timeline (default)
+ *    'pattern' = loop ONLY the editing pattern (composing mode)
+ *  The user toggles this with the switch on the timeline header. */
+export const [playbackMode, setPlaybackMode] = createSignal<PlaybackMode>('song');
 
 // === Scene state ===
 export type Mood = 'idle' | 'groove' | 'hype' | 'drop' | 'acid';
@@ -116,6 +122,18 @@ seq.onSong = (info) => {
   setPlayingPatternId(info.patternId);
   setPlayingSlotIndex(info.slotIndex);
 };
+
+// Sync playbackMode + editingPatternId to the sequencer so it knows what
+// to play when mode === 'pattern' and what to switch to live.
+createEffect(() => {
+  seq.mode = playbackMode();
+  seq.editingPatternId = editingPatternId();
+  // If we're playing and switched to pattern mode (or the editing pattern
+  // changed in pattern mode), hot-swap the live pattern so it loops correctly.
+  if (seq.isPlaying && seq.mode === 'pattern') {
+    seq.loadEditingPattern();
+  }
+});
 
 // === Actions ===
 export async function togglePlay(): Promise<void> {

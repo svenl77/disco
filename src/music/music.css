@@ -226,6 +226,44 @@
   margin-left: auto;
 }
 
+/* === LOOP-MODE SWITCH === pill that toggles SONG ↔ LOOP playback */
+.loop-switch {
+  display: inline-flex;
+  align-items: stretch;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  border-radius: 14px;
+  padding: 2px;
+  gap: 2px;
+}
+.loop-switch-opt {
+  font-family: inherit;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  font-weight: 900;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.55);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+  letter-spacing: 1.5px;
+  white-space: nowrap;
+}
+.loop-switch-opt:hover { color: #fff; }
+.loop-switch-opt.active {
+  background: linear-gradient(135deg, var(--cyan), var(--pink));
+  color: #000;
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.6);
+}
+
+/* When LOOP mode is active, dim the song strip so the focus is on the
+   single record being looped. */
+.timeline-wrap[data-mode='pattern'] .timeline-strip { opacity: 0.45; }
+.timeline-wrap[data-mode='pattern'] .vinyl.playing,
+.timeline-wrap[data-mode='pattern'] .vinyl-add  { opacity: 1; }
+
 .timeline-strip {
   display: flex;
   gap: 14px;
