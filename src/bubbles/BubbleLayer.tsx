@@ -70,12 +70,15 @@ export function BubbleLayer() {
     }),
   );
 
-  // On play start
+  // On play start — fire THREE bubbles immediately so the user notices
+  // the conversation system is alive (was only 1, easy to miss).
   createEffect(
     on(isPlaying, (playing) => {
       if (!playing) return;
-      const boy = BOYS[Math.floor(Math.random() * BOYS.length)];
-      setTimeout(() => add(boy.id as BoyId, 'start'), 400);
+      const shuffled = [...BOYS].sort(() => Math.random() - 0.5);
+      shuffled.slice(0, 3).forEach((boy, i) =>
+        setTimeout(() => add(boy.id as BoyId, 'start'), 200 + i * 350),
+      );
     }),
   );
 
