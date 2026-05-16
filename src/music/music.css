@@ -228,74 +228,210 @@
 
 .timeline-strip {
   display: flex;
-  gap: 6px;
+  gap: 14px;
   overflow-x: auto;
-  padding: 8px 4px;
+  padding: 6px 4px 12px;
   scroll-snap-type: x proximity;
+  align-items: flex-start;
 }
 .timeline-strip::-webkit-scrollbar { height: 6px; }
 .timeline-strip::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.4); border-radius: 3px; }
 .timeline-strip::-webkit-scrollbar-thumb { background: var(--pink); border-radius: 3px; }
 
-.timeline-block {
+/* === VINYL RECORDS === each pattern slot is a black grooved disc with
+   a coloured centre label. The currently playing one spins. */
+.vinyl {
   position: relative;
   flex: 0 0 auto;
-  min-width: 64px;
-  height: 70px;
-  border-radius: 8px;
-  background: linear-gradient(180deg,
-    color-mix(in srgb, var(--block-color) 30%, #1a0028),
-    color-mix(in srgb, var(--block-color) 14%, #08010f));
-  border: 1.5px solid color-mix(in srgb, var(--block-color) 70%, transparent);
-  color: #fff;
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  scroll-snap-align: start;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+/* The spinning group — disc + label. The vinyl-name text sits OUTSIDE
+   this so it doesn't rotate with the disc. */
+.vinyl-spinner {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background:
+    /* dark vinyl base */
+    radial-gradient(circle at 50% 50%, #1a1a22 0%, #08080d 80%, #000 100%);
+  box-shadow:
+    inset 0 0 8px rgba(255, 255, 255, 0.06),
+    inset 0 0 16px rgba(0, 0, 0, 0.8),
+    0 4px 10px rgba(0, 0, 0, 0.7),
+    0 0 6px color-mix(in srgb, var(--vinyl-color, var(--pink)) 30%, transparent);
+}
+/* Grooves — concentric rings on the vinyl */
+.vinyl-grooves {
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  background:
+    repeating-radial-gradient(circle at 50% 50%,
+      transparent 0,
+      transparent 1.5px,
+      rgba(255, 255, 255, 0.04) 1.5px,
+      rgba(255, 255, 255, 0.04) 2px),
+    repeating-radial-gradient(circle at 50% 50%,
+      transparent 0,
+      transparent 5px,
+      rgba(0, 0, 0, 0.4) 5px,
+      rgba(0, 0, 0, 0.4) 6px);
+  /* A glossy shine sweep — fixed angle so it looks like reflected light */
+  box-shadow: inset 6px 0 12px rgba(255, 255, 255, 0.08);
+}
+/* The coloured centre label */
+.vinyl-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%,
+    color-mix(in srgb, var(--vinyl-color, var(--pink)) 100%, #fff 0%) 0%,
+    color-mix(in srgb, var(--vinyl-color, var(--pink)) 100%, #fff 0%) 60%,
+    color-mix(in srgb, var(--vinyl-color, var(--pink)) 70%, #000 30%) 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 6px;
-  cursor: pointer;
-  transition: transform 0.1s ease, box-shadow 0.15s ease;
-  scroll-snap-align: start;
-  box-shadow: 0 0 8px color-mix(in srgb, var(--block-color) 40%, transparent);
-}
-.timeline-block:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0 16px var(--block-color);
-}
-.timeline-block.playing {
-  border-color: var(--block-color);
   box-shadow:
-    0 0 22px var(--block-color),
-    inset 0 0 16px color-mix(in srgb, var(--block-color) 25%, transparent);
-  animation: blockPlaying var(--beat-ms) ease-in-out infinite alternate;
+    inset 0 0 3px rgba(0, 0, 0, 0.4),
+    0 0 6px color-mix(in srgb, var(--vinyl-color, var(--pink)) 50%, transparent);
+  color: #000;
 }
-@keyframes blockPlaying {
-  from { filter: brightness(0.85); }
-  to   { filter: brightness(1.15); }
+/* Spindle hole — the dot in the very middle */
+.vinyl-label::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #000;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15);
 }
-.timeline-block-id {
-  font-size: 18px;
+
+.vinyl-id {
+  font-family: inherit;
+  font-size: 14px;
   font-weight: 900;
-  color: var(--block-color);
-  text-shadow: 0 0 6px var(--block-color);
+  line-height: 1;
+  margin-top: -8px;   /* push above the spindle */
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+.vinyl-bars {
+  font-family: inherit;
+  font-size: 7px;
+  font-weight: bold;
   letter-spacing: 1px;
   line-height: 1;
+  margin-bottom: -8px; /* push below the spindle */
+  color: rgba(0, 0, 0, 0.7);
 }
-.timeline-block-name {
-  font-size: 8px;
-  font-weight: bold;
-  letter-spacing: 1.5px;
-  margin-top: 2px;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.85);
-}
-.timeline-block-bars {
+
+/* Pattern name beneath the vinyl — static, doesn't spin */
+.vinyl-name {
+  position: absolute;
+  bottom: -16px;
+  left: 50%;
+  transform: translateX(-50%);
   font-size: 9px;
-  color: rgba(255, 255, 255, 0.5);
-  margin-top: 1px;
   font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--vinyl-color, var(--pink)) 75%, #fff 25%);
+  white-space: nowrap;
+  text-shadow: 0 0 4px color-mix(in srgb, var(--vinyl-color, var(--pink)) 60%, transparent);
 }
-.timeline-block-actions {
+
+.vinyl:hover .vinyl-spinner {
+  filter: brightness(1.15);
+  box-shadow:
+    inset 0 0 8px rgba(255, 255, 255, 0.1),
+    inset 0 0 16px rgba(0, 0, 0, 0.6),
+    0 4px 12px rgba(0, 0, 0, 0.8),
+    0 0 14px var(--vinyl-color, var(--pink));
+}
+.vinyl:hover { transform: translateY(-2px); }
+
+/* The currently playing vinyl spins */
+.vinyl.playing .vinyl-spinner {
+  animation: vinylSpin 1.4s linear infinite;
+}
+.vinyl.playing {
+  filter: drop-shadow(0 0 14px var(--vinyl-color, var(--pink)));
+}
+.vinyl.playing .vinyl-name {
+  animation: vinylNameBlink calc(var(--beat-ms) * 2) ease-in-out infinite alternate;
+}
+@keyframes vinylSpin {
+  to { transform: rotate(360deg); }
+}
+@keyframes vinylNameBlink {
+  from { opacity: 0.7; }
+  to   { opacity: 1;   text-shadow: 0 0 10px var(--vinyl-color); }
+}
+
+/* The '+' record at the end of the strip — dashed disc */
+.vinyl-add {
+  cursor: pointer;
+}
+.vinyl-add .vinyl-grooves {
+  position: static;
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px dashed rgba(0, 240, 255, 0.5);
+  box-shadow: none;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.vinyl-add:hover .vinyl-grooves {
+  border-color: var(--cyan);
+  background: rgba(0, 240, 255, 0.1);
+}
+.vinyl-label-add {
+  background: transparent;
+  box-shadow: none;
+  color: var(--cyan);
+}
+.vinyl-label-add::after { display: none; }
+.vinyl-plus {
+  font-family: inherit;
+  font-size: 30px;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--cyan);
+  text-shadow: 0 0 8px var(--cyan);
+  margin: 0;
+}
+.vinyl-add-name {
+  font-size: 8px;
+  letter-spacing: 2px;
+  font-weight: bold;
+  color: var(--cyan);
+  margin-top: 2px;
+}
+
+/* Action chip floating above on hover — pattern controls in Studio mode */
+.vinyl-actions {
   position: absolute;
   top: -28px;
   left: 50%;
@@ -308,8 +444,8 @@
   border: 1px solid rgba(255, 43, 214, 0.4);
   z-index: 5;
 }
-.timeline-block:hover .timeline-block-actions { display: flex; }
-.timeline-block-actions button {
+.vinyl:hover .vinyl-actions { display: flex; }
+.vinyl-actions button {
   font-size: 11px;
   font-weight: 900;
   color: #fff;
@@ -322,11 +458,13 @@
   align-items: center;
   justify-content: center;
 }
-.timeline-block-actions button:hover { background: rgba(255, 43, 214, 0.4); }
-.timeline-block-actions button.rm:hover { background: rgba(255, 70, 70, 0.6); }
-.timeline-block-menu {
+.vinyl-actions button:hover { background: rgba(255, 43, 214, 0.4); }
+.vinyl-actions button.rm:hover { background: rgba(255, 70, 70, 0.6); }
+
+/* Right-click pattern picker menu */
+.vinyl-menu {
   position: absolute;
-  top: -50px;
+  top: -54px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -337,7 +475,7 @@
   border-radius: 8px;
   z-index: 6;
 }
-.timeline-block-menu button {
+.vinyl-menu button {
   width: 24px;
   height: 24px;
   font-weight: 900;
@@ -348,28 +486,10 @@
   border-radius: 4px;
   text-shadow: 0 0 4px var(--menu-color);
 }
-.timeline-block-menu button.active {
+.vinyl-menu button.active {
   background: var(--menu-color);
   color: #000;
   text-shadow: none;
-}
-.timeline-add {
-  flex: 0 0 auto;
-  min-width: 48px;
-  height: 70px;
-  border-radius: 8px;
-  background: rgba(0, 0, 0, 0.4);
-  border: 1.5px dashed rgba(0, 240, 255, 0.4);
-  color: var(--cyan);
-  font-size: 28px;
-  font-weight: 900;
-  cursor: pointer;
-  transition: transform 0.1s ease, border-color 0.15s ease;
-}
-.timeline-add:hover {
-  border-color: var(--cyan);
-  background: rgba(0, 240, 255, 0.1);
-  transform: translateY(-2px);
 }
 
 /* === Pattern Bank === */

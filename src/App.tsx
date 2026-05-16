@@ -1,10 +1,13 @@
 import { onMount } from 'solid-js';
 import { Stage } from './stage/Stage';
 import { MusicPanel } from './music/MusicPanel';
-import { ShareBar, applySet } from './share/ShareBar';
+import { applySet } from './share/ShareBar';
 import { setFromCurrentURL } from './share/serialize';
 
 export function App() {
+  // URL-based loading still works (paste a share link into the address bar
+  // and the song loads). The visible SHARE/LOAD UI was removed — sharing
+  // will be reimplemented later through a different surface.
   onMount(() => {
     const set = setFromCurrentURL();
     if (set) applySet(set);
@@ -20,7 +23,6 @@ export function App() {
       <main>
         <Stage />
         <MusicPanel />
-        <ShareBar />
       </main>
 
       <footer class="app-footer">

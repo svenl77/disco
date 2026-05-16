@@ -1,15 +1,12 @@
 /**
- * The Song Timeline — the heart of arrangement mode.
+ * The Song Timeline — vinyl records arranged in playback order.
  *
- * Renders the `song` (ordered list of slots) as a horizontal strip of colored
- * blocks. Each block shows its pattern ID + name + bar count. The currently
- * playing slot has a glowing border. A playhead bar fills inside the active
- * slot as bars elapse.
+ * Each pattern slot is a black vinyl with a coloured center label that
+ * shows the pattern ID and name. The vinyl that is CURRENTLY PLAYING
+ * spins (1.4s/rev). A '+' record at the end lets you add new slots.
  *
- *   [A:INTRO×4] [B:VERSE×4] [C:CHORUS×4] [D:DROP×4]  [+]
- *
- * Click a slot to jump to it. Click + to add a new slot at the end.
- * Right-click (or hover button) to cycle the pattern in that slot.
+ *   ( A )  ( B )  ( C )  ( D )  ( + )
+ *   INTRO  VERSE  CHORUS DROP   create
  */
 import { For, Show, createSignal } from 'solid-js';
 import {
@@ -29,8 +26,7 @@ import {
 import { PATTERN_COLORS, PATTERN_IDS, type PatternId } from '../audio/song';
 
 interface Props {
-  /** Compact = shorter blocks, used by the Easy panel.
-   *  Editable = show controls (bars +/-, remove, dropdown) used by Studio. */
+  /** Show inline editing controls (bars +/-, pattern picker, remove). */
   editable?: boolean;
 }
 
@@ -50,7 +46,7 @@ export function TimelineView(props: Props) {
       <div class="timeline-strip">
         <For each={song()}>
           {(slot, i) => (
-            <TimelineBlock
+            <Vinyl
               index={i()}
               patternId={slot.patternId}
               bars={slot.bars}
@@ -59,17 +55,24 @@ export function TimelineView(props: Props) {
             />
           )}
         </For>
-        <Show when={props.editable ?? false}>
-          <button class="timeline-add" onClick={() => addSongSlot(editingPatternId(), 4)} title="Add block">
-            +
-          </button>
-        </Show>
+        {/* '+' record — creates a new slot using the currently-edited pattern */}
+        <button
+          class="vinyl vinyl-add"
+          onClick={() => addSongSlot(editingPatternId(), 4)}
+          title="Add a new record to the song"
+        >
+          <div class="vinyl-grooves" />
+          <div class="vinyl-label vinyl-label-add">
+            <span class="vinyl-plus">+</span>
+            <span class="vinyl-add-name">NEW</span>
+          </div>
+        </button>
       </div>
     </div>
   );
 }
 
-function TimelineBlock(props: {
+function Vinyl(props: {
   index: number;
   patternId: PatternId;
   bars: number;
@@ -99,34 +102,36 @@ function TimelineBlock(props: {
 
   return (
     <div
-      class="timeline-block"
+      class="vinyl"
       classList={{ playing: props.isPlaying }}
-      style={{
-        '--block-color': color(),
-        width: `${48 + props.bars * 8}px`,
-      }}
+      style={{ '--vinyl-color': color() }}
       onClick={onClick}
       onContextMenu={onRightClick}
+      title={`${name()} × ${props.bars} bars`}
     >
-      <span class="timeline-block-id">{props.patternId}</span>
-      <span class="timeline-block-name">{name()}</span>
-      <span class="timeline-block-bars">×{props.bars}</span>
+      {/* The spinning vinyl group — black grooved disc + coloured center label */}
+      <div class="vinyl-spinner">
+        <div class="vinyl-grooves" />
+        <div class="vinyl-label">
+          <span class="vinyl-id">{props.patternId}</span>
+          <span class="vinyl-bars">×{props.bars}</span>
+        </div>
+      </div>
+
+      {/* Pattern name beneath — does NOT rotate so it stays readable */}
+      <span class="vinyl-name">{name()}</span>
 
       <Show when={props.editable}>
-        <div class="timeline-block-actions" onClick={(e) => e.stopPropagation()}>
+        <div class="vinyl-actions" onClick={(e) => e.stopPropagation()}>
           <button title="Cycle pattern" onClick={cyclePattern}>↻</button>
           <button title="More bars" onClick={() => setSlotBars(props.index, props.bars + 1)}>+</button>
           <button title="Fewer bars" onClick={() => setSlotBars(props.index, props.bars - 1)}>−</button>
-          <button title="Remove block" class="rm" onClick={() => removeSongSlot(props.index)}>×</button>
+          <button title="Remove" class="rm" onClick={() => removeSongSlot(props.index)}>×</button>
         </div>
       </Show>
 
-      <Show when={props.isPlaying}>
-        <div class="timeline-block-glow" />
-      </Show>
-
       <Show when={menuOpen()}>
-        <div class="timeline-block-menu" onClick={(e) => e.stopPropagation()}>
+        <div class="vinyl-menu" onClick={(e) => e.stopPropagation()}>
           <For each={PATTERN_IDS}>
             {(id) => (
               <button
