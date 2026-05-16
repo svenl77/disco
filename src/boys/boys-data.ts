@@ -1,16 +1,16 @@
 /**
  * Boys Club roster. Each boy has a zone in the disco scene:
  *
- *   eggplant  — center stage, $DISCO is the DJ (behind the decks)
+ *   eggplant  — DJ booth, behind the decks
  *   pepe      — dance floor, front-left, dancing
  *   maus      — dance floor, front-right, dancing
- *   burns     — near the bar, sipping martini, chill
- *   landwulf  — at the bar (right side), hand raised
+ *   andy      — behind the bar counter (the bartender)
+ *   landwulf  — in front of the bar (customer)
  *
  * `zone` controls placement; `dance` controls which keyframe animation they
  * play (dancers do big bobs, bar-folks do subtle sway).
  */
-export type Zone = 'dj' | 'dancefloor-l' | 'dancefloor-r' | 'bar-side' | 'bar';
+export type Zone = 'dj' | 'dancefloor-l' | 'dancefloor-r' | 'bar-keep' | 'bar';
 
 export interface BoyDef {
   id: string;
@@ -47,12 +47,14 @@ export const BOYS: BoyDef[] = [
     zone: 'dancefloor-r',
   },
   {
-    id: 'burns',
-    name: 'BURNS',
+    // Same yellow PNG as the old "burns" — now Andy, the bartender from
+    // Matt Furie's original Boys Club comic. He stands behind the counter.
+    id: 'andy',
+    name: 'ANDY',
     color: '#ffd24a',
     accent: '#7a4a00',
     dance: 'D',
-    zone: 'bar-side',
+    zone: 'bar-keep',
   },
   {
     id: 'landwulf',

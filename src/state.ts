@@ -170,8 +170,8 @@ export async function triggerBoyAction(boyId: string): Promise<void> {
       action = { boyId, ts: performance.now(), mood: 'idle', bubbles: 2, flash: '#7aa3ff' };
       break;
 
-    case 'burns':
-      audio.burnsClink();
+    case 'andy':
+      audio.burnsClink();  // glass-clink — perfect for a bartender
       action = { boyId, ts: performance.now(), mood: 'hype', bubbles: 2, flash: '#ffd24a' };
       break;
 

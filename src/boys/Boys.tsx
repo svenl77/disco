@@ -26,12 +26,13 @@ const ZONE_CONFIG: Record<Zone, {
   // at his hip level. The pult is z-index 5; Eggplant is layer 4.
   'dj':            { size: 'm',  left: '50%', bottom: '30%', layer: 4 },
   // Two front dancers, OUTSIDE the pult area horizontally (pult spans ~36-64%)
-  'dancefloor-l':  { size: 'm',  left: '18%', bottom: '6%',  layer: 7 },
-  'dancefloor-r':  { size: 'm',  left: '32%', bottom: '6%',  layer: 7 },
-  // Burns chills mid-right
-  'bar-side':      { size: 'm',  left: '68%', bottom: '7%',  layer: 6 },
-  // Landwulf at the bar (far right)
-  'bar':           { size: 's',  left: '88%', bottom: '12%', layer: 6 },
+  'dancefloor-l':  { size: 'm',  left: '15%', bottom: '6%',  layer: 7 },
+  'dancefloor-r':  { size: 'm',  left: '30%', bottom: '6%',  layer: 7 },
+  // Andy stands BEHIND the bar counter — like the DJ behind the decks
+  // (bar element is z-index 5 so its counter-front covers Andy's lower body)
+  'bar-keep':      { size: 'm',  left: '85%', bottom: '30%', layer: 4 },
+  // Landwulf hangs IN FRONT of the bar as a customer
+  'bar':           { size: 's',  left: '70%', bottom: '8%',  layer: 6 },
 };
 
 export function Boys() {

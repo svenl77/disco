@@ -17,7 +17,7 @@
  */
 
 export type Mood = 'idle' | 'hype' | 'drop' | 'acid' | 'start';
-export type BoyId = 'pepe' | 'eggplant' | 'maus' | 'burns' | 'landwulf';
+export type BoyId = 'pepe' | 'eggplant' | 'maus' | 'andy' | 'landwulf';
 
 type SpruechePool = Record<Mood, string[]>;
 type AllSprueche = Record<BoyId, SpruechePool>;
@@ -132,37 +132,38 @@ export const SPRUECHE: AllSprueche = {
     acid: ['neural network reset', 'algorithmic disco', 'recalibrating', 'data is dancing'],
     start: ['signal received', 'boys are positioned', 'opening bell', "let's review the chart"],
   },
-  burns: {
+  andy: {
+    // Andy is the bartender — laid-back, observational, dry humour
     idle: [
-      'excellent...',
-      'release the bass',
-      'I love this song',
-      'splendid',
-      'marvelous',
-      'rich vibes',
-      'I own this floor',
-      'release the hounds',
-      'champagne and bass',
-      'the lights, the lights',
-      'I taste the funk',
-      'they call me Mr. Disco',
-      'sip, dance, repeat',
-      'I deserve this beat',
-      'vintage disco, exquisite',
-      'ahhh, the bass',
-      'leverage on disco',
-      'the chart is mine',
+      'what can I get ya',
+      'another one?',
+      'on the house',
+      'cheers',
+      'easy on the bass, fellas',
+      'I keep the drinks cold',
+      'good crowd tonight',
+      'mixing some magic',
+      'shaken, not stirred',
+      'tip your bartender',
+      'house special?',
+      'rough night?',
+      'pour decisions',
+      "I've seen it all",
+      'one for the road',
+      "you're cut off — kidding",
+      'extra olives?',
+      'this one is on me',
     ],
-    hype: ['MORE COWBELL', 'LOUDER, BOY', 'YES YES YES', 'I COMMAND THE KICK', "DON'T STOP"],
+    hype: ['ROUNDS ON ME', 'TO THE BOYS', 'POUR IT UP', 'CHEERS BROTHER', 'DOUBLES FOR EVERYONE'],
     drop: [
-      'splendid drop',
-      'magnificent',
-      "I'll buy the club",
-      'this drop is mine',
-      'exquisite low end',
+      'and the bottles shake',
+      'pour faster',
+      'this is my favourite part',
+      'bottle service incoming',
+      'the bar is alive',
     ],
-    acid: ['oh my', 'colors of money', 'I see the rich vibrations', 'gold dust everywhere'],
-    start: ['ahhh, finally', 'pour me one', 'shall we dance', 'the night begins'],
+    acid: ['the drinks are talking', 'pour me a rainbow', 'glasses are floating', 'tonic and cosmic'],
+    start: ['the bar is open', "what'll it be", 'first round', 'shift just started'],
   },
   landwulf: {
     idle: [
@@ -193,7 +194,7 @@ export const SPRUECHE: AllSprueche = {
 };
 
 const lastShown: Record<BoyId, string> = {
-  pepe: '', eggplant: '', maus: '', burns: '', landwulf: '',
+  pepe: '', eggplant: '', maus: '', andy: '', landwulf: '',
 };
 
 /** Pick a random sprueche for a boy in a given mood; avoid immediate repeats. */

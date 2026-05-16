@@ -489,161 +489,391 @@
 }
 .speaker::before { top: 12px; width: 42px; height: 42px; }
 .speaker::after  { top: 70px; width: 28px; height: 28px; }
-.speaker.stack-l { left:  calc(50% - 200px); }
-.speaker.stack-r { right: calc(50% - 200px); }
+/* Speakers sit OUTSIDE the DJ pult (pult is 360px wide → ±180 from centre)
+   with a comfortable gap so they don't visually merge into the pult. */
+.speaker.stack-l { left:  calc(50% - 250px); }
+.speaker.stack-r { right: calc(50% - 250px); }
 @keyframes speakerPulse {
   from { box-shadow: 0 0 8px rgba(255, 43, 214, 0.2), inset 0 0 12px rgba(0, 0, 0, 0.7); }
   to   { box-shadow: 0 0 22px rgba(255, 43, 214, 0.6), inset 0 0 12px rgba(0, 0, 0, 0.7); }
 }
 
-/* === THE BAR === stylish corner with bottle shelf, counter and stool ===
-   Sits in the bottom-right of the stage. Slightly tilted backwall for depth. */
+/* === THE BAR === proper 3D-front-view bar with backwall, shelves, bottles,
+   counter top, glass rack and tap. Andy stands BEHIND the counter (his zone
+   is 'bar-keep' at layer 4) while the bar element itself is z-index 5 so
+   its counter-front covers his legs — mirror of the DJ-pult composition. */
+/* NO z-index on .bar itself — we don't want it to become a stacking context.
+   Andy stands at z-index 4 and must be ABOVE the back wall/bottles (z=1)
+   but BELOW the counter-front (z=5). If the .bar wrapper has z-index, all
+   children jump to its stacking context and Andy ends up behind everything. */
 .bar {
   position: absolute;
-  bottom: 6%;
+  bottom: 8%;
   right: -10px;
-  width: 280px;
-  height: 290px;
-  z-index: 4;
+  width: 360px;
+  height: 360px;
   pointer-events: none;
-  perspective: 600px;
 }
-/* Backwall with bottle shelf */
-.bar-bottles {
+
+/* === BACK WALL === wood-and-mirror panelled wall behind the bottles */
+.bar-backwall {
   position: absolute;
   top: 0;
+  left: 0;
   right: 0;
-  width: 100%;
-  height: 170px;
+  height: 180px;
   background:
-    /* The actual bottles — each is a tall glow */
-    radial-gradient(ellipse 6px 32px at 15% 60%, rgba(255, 43, 214, 0.75) 0%, rgba(255, 43, 214, 0.15) 60%, transparent 80%),
-    radial-gradient(ellipse 7px 36px at 26% 55%, rgba(0, 240, 255, 0.75) 0%, rgba(0, 240, 255, 0.15) 60%, transparent 80%),
-    radial-gradient(ellipse 6px 34px at 36% 58%, rgba(255, 242, 0, 0.7) 0%, rgba(255, 242, 0, 0.15) 60%, transparent 80%),
-    radial-gradient(ellipse 6px 30px at 46% 62%, rgba(57, 255, 20, 0.7) 0%, rgba(57, 255, 20, 0.15) 60%, transparent 80%),
-    radial-gradient(ellipse 7px 34px at 56% 56%, rgba(179, 70, 200, 0.75) 0%, rgba(179, 70, 200, 0.15) 60%, transparent 80%),
-    radial-gradient(ellipse 6px 32px at 66% 60%, rgba(255, 122, 0, 0.75) 0%, rgba(255, 122, 0, 0.15) 60%, transparent 80%),
-    radial-gradient(ellipse 6px 30px at 76% 58%, rgba(255, 43, 214, 0.7) 0%, rgba(255, 43, 214, 0.15) 60%, transparent 80%),
-    radial-gradient(ellipse 7px 34px at 86% 56%, rgba(0, 240, 255, 0.7) 0%, rgba(0, 240, 255, 0.15) 60%, transparent 80%),
-    /* shelf line */
+    /* subtle vertical wood-panel seams */
+    repeating-linear-gradient(90deg,
+      transparent 0,
+      transparent 38px,
+      rgba(0, 0, 0, 0.3) 38px,
+      rgba(0, 0, 0, 0.3) 39px),
+    /* mirror tint — a dark blue-purple reflection */
     linear-gradient(180deg,
-      transparent 0%,
-      transparent 78%,
-      rgba(0, 240, 255, 0.7) 78%,
-      rgba(0, 240, 255, 0.7) 79%,
-      transparent 79%,
-      transparent 100%),
-    /* wall behind the bottles */
-    linear-gradient(180deg, rgba(40, 0, 80, 0.95) 0%, rgba(20, 0, 40, 0.95) 60%, rgba(10, 0, 20, 0.95) 100%);
+      rgba(50, 10, 80, 0.85) 0%,
+      rgba(30, 5, 50, 0.92) 40%,
+      rgba(15, 0, 30, 0.95) 100%);
+  border: 1px solid rgba(255, 43, 214, 0.25);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.7);
+  z-index: 1;
 }
-/* "BAR" neon sign behind the bottles */
-.bar-bottles::before {
-  content: 'BAR';
+/* Soft warm light spilling down from behind the bar */
+.bar-backwall::before {
+  content: '';
   position: absolute;
   top: 8px;
+  left: 8%;
+  right: 8%;
+  height: 60px;
+  background: radial-gradient(ellipse at center top,
+    rgba(255, 122, 0, 0.45) 0%,
+    rgba(255, 43, 214, 0.18) 40%,
+    transparent 70%);
+  filter: blur(8px);
+}
+
+/* === "BAR" NEON SIGN === flickers like real neon */
+.bar-neon {
+  position: absolute;
+  top: 14px;
   left: 50%;
   transform: translateX(-50%);
   font-family: inherit;
-  font-size: 14px;
+  font-size: 24px;
   font-weight: 900;
-  letter-spacing: 6px;
+  letter-spacing: 14px;
   color: var(--pink);
   text-shadow:
-    0 0 6px var(--pink),
-    0 0 16px var(--pink),
-    0 0 24px rgba(255, 43, 214, 0.4);
-  animation: barNeonFlicker 4s ease-in-out infinite;
+    0 0 8px var(--pink),
+    0 0 18px var(--pink),
+    0 0 32px rgba(255, 43, 214, 0.6);
+  animation: barNeonFlicker 5s ease-in-out infinite;
+  z-index: 2;
 }
 @keyframes barNeonFlicker {
   0%, 100% { opacity: 1; }
-  47%      { opacity: 1; }
-  48%      { opacity: 0.3; }
-  49%      { opacity: 1; }
-  88%      { opacity: 1; }
-  89%      { opacity: 0.5; }
-  90%      { opacity: 1; }
+  47% { opacity: 1; }
+  48% { opacity: 0.3; }
+  49% { opacity: 1; }
+  78% { opacity: 1; }
+  79% { opacity: 0.5; }
+  80% { opacity: 1; }
 }
 
-.bar-counter {
+/* === SHELVES with bottles === two rows behind the bartender */
+.bar-shelves {
   position: absolute;
-  bottom: 70px;
+  top: 48px;
+  left: 14px;
+  right: 14px;
+  height: 124px;
+  z-index: 2;
+}
+.bar-shelf {
+  position: absolute;
+  left: 0;
   right: 0;
-  width: 100%;
-  height: 26px;
+  height: 54px;
+  /* the shelf board itself — a thin lit edge */
+  border-bottom: 2px solid rgba(0, 240, 255, 0.45);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.5),
+    0 0 8px rgba(0, 240, 255, 0.18);
+}
+.bar-shelf-top { top: 0; }
+.bar-shelf-bot { top: 62px; }
+
+/* Bottle silhouettes — each a tall narrow gradient shape with a colored body */
+.bottle {
+  position: absolute;
+  bottom: 4px;
+  width: 12px;
+  height: 44px;
+  background: linear-gradient(180deg,
+    var(--bot-color, var(--pink)) 0%,
+    color-mix(in srgb, var(--bot-color, var(--pink)) 70%, #000 30%) 70%,
+    color-mix(in srgb, var(--bot-color, var(--pink)) 30%, #000 70%) 100%);
+  border-radius: 2px 2px 1px 1px;
+  /* The bottleneck */
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.2),
+    0 0 6px color-mix(in srgb, var(--bot-color, var(--pink)) 60%, transparent),
+    0 1px 1px rgba(0, 0, 0, 0.6);
+}
+.bottle::before {
+  /* neck of bottle */
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 5px;
+  height: 8px;
+  background: inherit;
+  border-radius: 2px 2px 0 0;
+  box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.2);
+}
+.bottle::after {
+  /* cap */
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 5px;
+  height: 4px;
+  background: linear-gradient(180deg, #888, #444);
+  border-radius: 1px;
+}
+/* Bottle colours + positions — staggered across the shelves */
+.bar-shelf-top .bottle:nth-child(1) { --bot-color: var(--pink);     left: 4%;  }
+.bar-shelf-top .bottle:nth-child(2) { --bot-color: var(--cyan);     left: 14%; height: 40px; }
+.bar-shelf-top .bottle:nth-child(3) { --bot-color: var(--yellow);   left: 24%; }
+.bar-shelf-top .bottle:nth-child(4) { --bot-color: var(--green);    left: 35%; height: 38px; }
+.bar-shelf-top .bottle:nth-child(5) { --bot-color: var(--eggplant); left: 46%; height: 46px; }
+.bar-shelf-top .bottle:nth-child(6) { --bot-color: var(--orange);   left: 58%; }
+.bar-shelf-top .bottle:nth-child(7) { --bot-color: var(--pink);     left: 70%; height: 40px; }
+.bar-shelf-top .bottle:nth-child(8) { --bot-color: var(--cyan);     left: 82%; }
+.bar-shelf-top .bottle:nth-child(9) { --bot-color: var(--yellow);   left: 92%; height: 42px; }
+
+.bar-shelf-bot .bottle:nth-child(1) { --bot-color: var(--eggplant); left: 2%;  }
+.bar-shelf-bot .bottle:nth-child(2) { --bot-color: var(--green);    left: 12%; height: 46px; }
+.bar-shelf-bot .bottle:nth-child(3) { --bot-color: var(--pink);     left: 22%; height: 38px; }
+.bar-shelf-bot .bottle:nth-child(4) { --bot-color: var(--orange);   left: 32%; }
+.bar-shelf-bot .bottle:nth-child(5) { --bot-color: var(--cyan);     left: 42%; height: 44px; }
+.bar-shelf-bot .bottle:nth-child(6) { --bot-color: var(--yellow);   left: 53%; }
+.bar-shelf-bot .bottle:nth-child(7) { --bot-color: var(--green);    left: 64%; height: 42px; }
+.bar-shelf-bot .bottle:nth-child(8) { --bot-color: var(--eggplant); left: 76%; }
+.bar-shelf-bot .bottle:nth-child(9) { --bot-color: var(--pink);     left: 88%; height: 40px; }
+
+/* === GLASS RACK === hanging glasses above the counter (in front of Andy) */
+.bar-glasses {
+  position: absolute;
+  top: 156px;  /* just below the shelves, above the counter */
+  left: 14px;
+  right: 14px;
+  height: 18px;
+  z-index: 6;  /* in front of Andy who is behind the counter */
+  /* Rail */
+  border-top: 2px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+.glass {
+  position: absolute;
+  top: 2px;
+  width: 10px;
+  height: 14px;
+  background: linear-gradient(180deg,
+    rgba(255, 255, 255, 0.55) 0%,
+    rgba(255, 255, 255, 0.15) 60%,
+    rgba(255, 255, 255, 0.35) 100%);
+  border-radius: 0 0 50% 50% / 0 0 25% 25%;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-top: none;
+  box-shadow: inset 0 -2px 4px rgba(0, 240, 255, 0.3);
+}
+.glass:nth-child(1) { left: 6%; }
+.glass:nth-child(2) { left: 18%; }
+.glass:nth-child(3) { left: 30%; }
+.glass:nth-child(4) { left: 42%; }
+.glass:nth-child(5) { left: 54%; }
+.glass:nth-child(6) { left: 66%; }
+.glass:nth-child(7) { left: 78%; }
+.glass:nth-child(8) { left: 90%; }
+
+/* === COUNTER TOP === narrow surface visible between Andy and the front */
+.bar-counter-top {
+  position: absolute;
+  top: 180px;
+  left: 0;
+  right: 0;
+  height: 14px;
   background:
     linear-gradient(180deg,
       #4a2670 0%,
-      #2a0050 40%,
-      #1a0028 70%,
-      #0a000f 100%);
+      #2a0050 50%,
+      #1a0028 100%);
   border-top: 2px solid rgba(0, 240, 255, 0.7);
-  border-left: 1px solid rgba(255, 43, 214, 0.4);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.6);
   box-shadow:
-    0 0 24px rgba(0, 240, 255, 0.35),
+    0 0 16px rgba(0, 240, 255, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
-.bar-counter::before {
+/* A neon edge running along the counter top */
+.bar-counter-top::before {
   content: '';
   position: absolute;
-  top: -4px;
+  top: -3px;
   left: 0;
   right: 0;
   height: 2px;
   background: linear-gradient(90deg, transparent, var(--cyan), var(--pink), var(--cyan), transparent);
   box-shadow: 0 0 10px var(--cyan);
 }
-.bar-counter::after {
-  /* a martini glass / drink on the counter */
+
+/* Beer tap on the counter */
+.bar-tap {
+  position: absolute;
+  top: 154px;
+  right: 30px;
+  width: 8px;
+  height: 28px;
+  background: linear-gradient(180deg, #aaa 0%, #555 70%, #333 100%);
+  border-radius: 2px 2px 1px 1px;
+  z-index: 6;
+}
+.bar-tap::before {
+  /* Tap handle */
   content: '';
   position: absolute;
-  top: -14px;
-  left: 30%;
-  width: 10px;
-  height: 14px;
-  background:
-    radial-gradient(ellipse 5px 3px at 50% 100%, rgba(255, 242, 0, 0.9), transparent 70%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.1) 100%);
-  clip-path: polygon(0% 0%, 100% 0%, 60% 50%, 60% 90%, 100% 90%, 100% 100%, 0% 100%, 0% 90%, 40% 90%, 40% 50%);
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 10px;
+  background: linear-gradient(180deg, var(--cyan), #1a8088);
+  border-radius: 2px;
+  box-shadow: 0 0 6px var(--cyan);
+}
+.bar-tap::after {
+  /* nozzle */
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  background: #888;
+  border-radius: 0 0 50% 50%;
 }
 
+/* A drink (martini glass) sitting on the counter */
+.bar-drink {
+  position: absolute;
+  top: 168px;
+  left: 20%;
+  width: 12px;
+  height: 14px;
+  background:
+    radial-gradient(ellipse 6px 3px at 50% 95%, rgba(255, 242, 0, 0.95), transparent 70%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.1) 100%);
+  clip-path: polygon(0% 0%, 100% 0%, 60% 50%, 60% 90%, 100% 90%, 100% 100%, 0% 100%, 0% 90%, 40% 90%, 40% 50%);
+  z-index: 6;
+}
+
+/* === COUNTER FRONT === the big audience-facing front panel of the bar
+   This is what hides Andy's lower body — same trick as the DJ pult.
+   z-index 5 puts it IN FRONT of Andy (z-index 4) — the key bit that makes
+   him look like a bartender standing behind the bar. */
+.bar-counter-front {
+  position: absolute;
+  top: 194px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(ellipse 60% 80% at 50% 30%, rgba(255, 43, 214, 0.10), transparent 70%),
+    linear-gradient(180deg,
+      #2a1450 0%,
+      #1a0028 50%,
+      #0a000f 100%);
+  border: 1.5px solid rgba(255, 43, 214, 0.5);
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7);
+  z-index: 5;
+}
+.bar-counter-top { z-index: 5; }
+.bar-counter-front::after {
+  content: 'BOYS CLUB';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 5px;
+  color: var(--pink);
+  text-shadow:
+    0 0 6px var(--pink),
+    0 0 14px rgba(255, 43, 214, 0.55);
+  white-space: nowrap;
+}
+
+/* === BARSTOOL in front of the counter — Landwulf can lean on it */
 .bar-stool {
   position: absolute;
-  bottom: 0;
-  right: 60px;
-  width: 16px;
-  height: 70px;
-  background: linear-gradient(180deg, #14001f 0%, #08000d 100%);
+  bottom: -34px;
+  left: 18px;
+  width: 18px;
+  height: 80px;
+  background: linear-gradient(180deg, #1a0028 0%, #0a000f 100%);
   border-radius: 4px 4px 2px 2px;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  z-index: 6;
 }
 .bar-stool::before {
   content: '';
   position: absolute;
   top: -8px;
-  left: -10px;
-  width: 36px;
+  left: -8px;
+  width: 34px;
   height: 12px;
   background: radial-gradient(ellipse at center, #4a2670, #1a0028);
   border-radius: 50%;
   border-top: 1.5px solid rgba(255, 43, 214, 0.4);
   box-shadow: 0 0 8px rgba(255, 43, 214, 0.3);
 }
-/* Bar glow — soft pink/cyan light from the bar */
+
+/* === BAR AMBIENT GLOW === warm pink/orange light bathing the bar area */
 .bar-glow {
   position: absolute;
-  bottom: 60px;
-  right: -20px;
-  width: 100%;
-  height: 140px;
-  background: radial-gradient(ellipse at center top,
-    rgba(255, 43, 214, 0.3) 0%,
-    rgba(0, 240, 255, 0.18) 35%,
+  top: 60px;
+  left: -40px;
+  right: -10px;
+  height: 200px;
+  background: radial-gradient(ellipse at center,
+    rgba(255, 122, 0, 0.18) 0%,
+    rgba(255, 43, 214, 0.12) 35%,
     transparent 70%);
-  filter: blur(10px);
+  filter: blur(14px);
+  z-index: 0;
   animation: barGlowPulse 2.4s ease-in-out infinite alternate;
+  pointer-events: none;
 }
+
+.bar-stool { z-index: 6; }
+.bar-tap { z-index: 6; }
+.bar-drink { z-index: 6; }
+.bar-glasses { z-index: 6; }
+.bar-neon { z-index: 2; }
 @keyframes barGlowPulse {
-  from { opacity: 0.5; }
+  from { opacity: 0.55; }
   to   { opacity: 1; }
 }
 
@@ -1038,8 +1268,8 @@
 
 /* === Responsive === */
 @media (max-width: 1100px) {
-  .speaker.stack-l { left:  calc(50% - 160px); }
-  .speaker.stack-r { right: calc(50% - 160px); }
+  .speaker.stack-l { left:  calc(50% - 210px); }
+  .speaker.stack-r { right: calc(50% - 210px); }
   .dj-stage { width: 280px; }
   .bar { width: 200px; }
 }
@@ -1048,8 +1278,8 @@
   .speaker { width: 46px; height: 110px; }
   .speaker::before { width: 32px; height: 32px; }
   .speaker::after  { width: 22px; height: 22px; top: 56px; }
-  .speaker.stack-l { left:  calc(50% - 130px); }
-  .speaker.stack-r { right: calc(50% - 130px); }
+  .speaker.stack-l { left:  calc(50% - 170px); }
+  .speaker.stack-r { right: calc(50% - 170px); }
   .dj-stage { width: 220px; height: 24px; }
   .dj-pult { width: 280px; height: 140px; }
   .deck { width: 70px; height: 22px; }
