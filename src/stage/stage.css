@@ -502,14 +502,13 @@
    counter top, glass rack and tap. Andy stands BEHIND the counter (his zone
    is 'bar-keep' at layer 4) while the bar element itself is z-index 5 so
    its counter-front covers his legs — mirror of the DJ-pult composition. */
-/* NO z-index on .bar itself — we don't want it to become a stacking context.
-   Andy stands at z-index 4 and must be ABOVE the back wall/bottles (z=1)
-   but BELOW the counter-front (z=5).
-
-   PERSPECTIVE: the bar sits in the back-right corner of the room, so we
-   rotate it ~16° around the Y-axis. The LEFT edge stays close to camera,
-   the RIGHT edge recedes into the back wall. Bar is smaller now (it's
-   farther away from the viewer than the dance floor). */
+/* NO z-index or transform on .bar — both would create a stacking context
+   that traps all bar children above Andy and breaks the "bartender behind
+   the counter" effect.
+   Instead, each bar element gets its own z-index that interleaves with the
+   boys: back wall + shelves at z=3 (behind Andy), counter front at z=5
+   (in front of Andy). The CORNER look is achieved by skewing only the
+   back wall + shelves group, not the whole bar wrapper. */
 .bar {
   position: absolute;
   bottom: 18%;
@@ -517,8 +516,24 @@
   width: 280px;
   height: 270px;
   pointer-events: none;
-  transform: perspective(900px) rotateY(16deg);
+}
+/* The back-group of the bar (back wall, shelves, bottles) gets the
+   perspective skew so it visually recedes into the right corner.
+   z-index 3 puts it BEHIND Andy (z=4). */
+.bar-back-group {
+  position: absolute;
+  inset: 0;
+  transform: perspective(900px) rotateY(14deg);
   transform-origin: left center;
+  z-index: 3;
+}
+/* The front-group (counter, glasses, tap, drink, stool) stays straight
+   on so it reads as the audience-facing front of the bar. z-index 5
+   puts it IN FRONT of Andy (z=4) — same trick as the DJ pult. */
+.bar-front-group {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
 }
 
 /* === BACK WALL === wood-and-mirror panelled wall behind the bottles */

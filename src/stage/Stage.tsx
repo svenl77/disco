@@ -115,59 +115,63 @@ export function Stage() {
       <div class="speaker stack-l" />
       <div class="speaker stack-r" />
 
-      {/* === THE BAR === composed of layers from back to front:
-            .bar-glow         — ambient warm light bathing the area (z=0)
-            .bar-backwall     — back wall behind the bottles (z=1)
-            .bar-neon         — flickering BAR sign on the wall (z=2)
-            .bar-shelves      — two horizontal shelves with bottles (z=3)
-            Andy stands here as bartender (layer 4 via his boy zone)
-            .bar-glasses + .bar-tap + .bar-drink — counter-top items (z=6)
-            .bar-counter-top  — narrow surface above the front face (z=5)
-            .bar-counter-front — big audience-facing panel (z=5)
-            .bar-stool        — barstool in front of the counter (z=6)  */}
+      {/* === THE BAR === split into back/front groups so Andy can stand
+            BETWEEN them via z-index (4 sits between back=3 and front=5):
+
+            .bar-back-group (z=3, perspective-skewed into the corner):
+              .bar-glow, .bar-backwall, .bar-neon, .bar-shelves+bottles
+            Andy (in boys-zones, layer 4) renders ABOVE the back group
+            .bar-front-group (z=5, no perspective so it stays facing the
+                              audience): .bar-counter-top, .bar-glasses,
+                              .bar-tap, .bar-drink, .bar-counter-front,
+                              .bar-stool                                 */}
       <div class="bar">
-        <div class="bar-glow" />
-        <div class="bar-backwall" />
-        <div class="bar-neon">BAR</div>
-        <div class="bar-shelves">
-          <div class="bar-shelf bar-shelf-top">
-            <span class="bottle" />
-            <span class="bottle" />
-            <span class="bottle" />
-            <span class="bottle" />
-            <span class="bottle" />
-            <span class="bottle" />
-            <span class="bottle" />
-            <span class="bottle" />
-            <span class="bottle" />
-          </div>
-          <div class="bar-shelf bar-shelf-bot">
-            <span class="bottle" />
-            <span class="bottle" />
-            <span class="bottle" />
-            <span class="bottle" />
-            <span class="bottle" />
-            <span class="bottle" />
-            <span class="bottle" />
-            <span class="bottle" />
-            <span class="bottle" />
+        <div class="bar-back-group">
+          <div class="bar-glow" />
+          <div class="bar-backwall" />
+          <div class="bar-neon">BAR</div>
+          <div class="bar-shelves">
+            <div class="bar-shelf bar-shelf-top">
+              <span class="bottle" />
+              <span class="bottle" />
+              <span class="bottle" />
+              <span class="bottle" />
+              <span class="bottle" />
+              <span class="bottle" />
+              <span class="bottle" />
+              <span class="bottle" />
+              <span class="bottle" />
+            </div>
+            <div class="bar-shelf bar-shelf-bot">
+              <span class="bottle" />
+              <span class="bottle" />
+              <span class="bottle" />
+              <span class="bottle" />
+              <span class="bottle" />
+              <span class="bottle" />
+              <span class="bottle" />
+              <span class="bottle" />
+              <span class="bottle" />
+            </div>
           </div>
         </div>
-        <div class="bar-glasses">
-          <span class="glass" />
-          <span class="glass" />
-          <span class="glass" />
-          <span class="glass" />
-          <span class="glass" />
-          <span class="glass" />
-          <span class="glass" />
-          <span class="glass" />
+        <div class="bar-front-group">
+          <div class="bar-glasses">
+            <span class="glass" />
+            <span class="glass" />
+            <span class="glass" />
+            <span class="glass" />
+            <span class="glass" />
+            <span class="glass" />
+            <span class="glass" />
+            <span class="glass" />
+          </div>
+          <div class="bar-tap" />
+          <div class="bar-drink" />
+          <div class="bar-counter-top" />
+          <div class="bar-counter-front" />
+          <div class="bar-stool" />
         </div>
-        <div class="bar-tap" />
-        <div class="bar-drink" />
-        <div class="bar-counter-top" />
-        <div class="bar-counter-front" />
-        <div class="bar-stool" />
       </div>
 
       {/* Perspective dance floor grid */}
