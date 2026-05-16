@@ -58,6 +58,11 @@ export const [playingSlotIndex, setPlayingSlotIndex] = createSignal<number>(0);
 /** Which pattern the user is editing (independent of playback) */
 export const [editingPatternId, setEditingPatternId] = createSignal<PatternId>('A');
 
+/** Which music-panel tab is open ('easy' shows the timeline + drop/shuffle,
+ *  'studio' adds the pattern bank + 16-step editor + chord pads). Lifted to
+ *  global state so actions like createNewRecord() can switch to Studio. */
+export const [musicTab, setMusicTab] = createSignal<'easy' | 'studio'>('easy');
+
 // === Scene state ===
 export type Mood = 'idle' | 'groove' | 'hype' | 'drop' | 'acid';
 export const [mood, setMood] = createSignal<Mood>('groove');
@@ -354,6 +359,49 @@ export function clearBankSlot(id: PatternId): void {
   seq.bank[id] = { ...seq.bank[id], patterns: empty };
   setPatternBank({ ...seq.bank });
   setPatternsVersion((v) => v + 1);
+}
+
+/** "+ NEW RECORD" — picks an empty bank slot (or empties an unused one),
+ *  appends it to the song, switches to Studio mode, selects it for editing.
+ *  Result: user sees a fresh 16-step grid ready to fill. */
+export function createNewRecord(): void {
+  const usedInSong = new Set(song().map((s) => s.patternId));
+
+  function isEmptyBank(id: PatternId): boolean {
+    const p = seq.bank[id]?.patterns;
+    if (!p) return false;
+    return (
+      !p.kick.some(Boolean) &&
+      !p.snare.some(Boolean) &&
+      !p.clap.some(Boolean) &&
+      !p.hatC.some(Boolean) &&
+      !p.hatO.some(Boolean) &&
+      !p.cowbell.some(Boolean) &&
+      !p.bass.some((x) => x !== null) &&
+      !p.lead.some((x) => x !== null)
+    );
+  }
+
+  // Preference order: empty + unused → unused (will clear) → least-used in song
+  let target = PATTERN_IDS.find((id) => isEmptyBank(id) && !usedInSong.has(id));
+  if (!target) {
+    target = PATTERN_IDS.find((id) => !usedInSong.has(id));
+    if (target) clearBankSlot(target);
+  }
+  if (!target) {
+    // All 8 slots are in the song; rotate from the editing one
+    const curIdx = PATTERN_IDS.indexOf(editingPatternId());
+    target = PATTERN_IDS[(curIdx + 1) % PATTERN_IDS.length];
+    clearBankSlot(target);
+  }
+
+  addSongSlot(target, 4);
+  setEditingPatternId(target);
+  setMusicTab('studio');
+  // Jump playback to the new slot so the user immediately hears it (silent)
+  // and the sequencer's playhead is in the right place when they hit play
+  const newSlotIndex = song().length - 1;
+  jumpToSongSlot(newSlotIndex);
 }
 
 /** Start fresh — clear every bank pattern + reset song to a single A slot */

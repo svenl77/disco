@@ -16,12 +16,11 @@ import {
   jumpToSongSlot,
   setSlotPattern,
   setSlotBars,
-  addSongSlot,
   removeSongSlot,
-  editingPatternId,
   selectPattern,
   isPlaying,
   togglePlay,
+  createNewRecord,
 } from '../state';
 import { PATTERN_COLORS, PATTERN_IDS, type PatternId } from '../audio/song';
 
@@ -55,11 +54,11 @@ export function TimelineView(props: Props) {
             />
           )}
         </For>
-        {/* '+' record — creates a new slot using the currently-edited pattern */}
+        {/* '+' record — opens Studio with an empty pattern ready to fill */}
         <button
           class="vinyl vinyl-add"
-          onClick={() => addSongSlot(editingPatternId(), 4)}
-          title="Add a new record to the song"
+          onClick={createNewRecord}
+          title="Create your own record — opens Studio with a fresh empty pattern"
         >
           <div class="vinyl-grooves" />
           <div class="vinyl-label vinyl-label-add">

@@ -4,7 +4,7 @@
  *   Easy:   timeline + play + tempo + drop + shuffle — minimum to compose.
  *   Studio: timeline + pattern bank + 16-step editor + chord pads + knobs.
  */
-import { createSignal, Show, For } from 'solid-js';
+import { Show, For } from 'solid-js';
 import {
   bpm,
   isPlaying,
@@ -22,6 +22,8 @@ import {
   reverb,
   editingPatternId,
   newSong,
+  musicTab,
+  setMusicTab,
 } from '../state';
 import { PRESETS } from '../audio/presets';
 import { Sequencer } from './Sequencer';
@@ -31,20 +33,18 @@ import { PatternBank } from './PatternBank';
 import './music.css';
 
 export function MusicPanel() {
-  const [tab, setTab] = createSignal<'easy' | 'studio'>('easy');
-
   return (
     <section class="music-panel">
       <div class="music-tabs">
-        <button class="music-tab" classList={{ active: tab() === 'easy' }} onClick={() => setTab('easy')}>
+        <button class="music-tab" classList={{ active: musicTab() === 'easy' }} onClick={() => setMusicTab('easy')}>
           🍹 EASY
         </button>
-        <button class="music-tab" classList={{ active: tab() === 'studio' }} onClick={() => setTab('studio')}>
+        <button class="music-tab" classList={{ active: musicTab() === 'studio' }} onClick={() => setMusicTab('studio')}>
           🎛 STUDIO
         </button>
       </div>
 
-      <Show when={tab() === 'easy'} fallback={<StudioPanel />}>
+      <Show when={musicTab() === 'easy'} fallback={<StudioPanel />}>
         <EasyPanel />
       </Show>
     </section>
