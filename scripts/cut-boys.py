@@ -128,18 +128,23 @@ def keep_largest_blob(img: Image.Image, alpha_threshold: int = 32) -> Image.Imag
     return Image.fromarray(arr, "RGBA")
 
 
-def trim_foot_shadow(img: Image.Image, min_row_pct: float = 0.18) -> Image.Image:
+def trim_foot_shadow(img: Image.Image, min_row_pct: float = 0.08) -> Image.Image:
     """Cut off the tail at the bottom of the cutout — the source illustration
     has a floor shadow under the boy that survives matte removal. The shadow
-    is dark (low RGB) and narrow, while the body has bright/colorful pixels.
+    is GREY (low saturation, similar R/G/B), while the body has either
+    BRIGHT pixels OR SATURATED color (jeans = dark BUT very blue).
 
     Walk from the bottom up. A row qualifies as "body" only if it has enough
-    BRIGHT (non-shadow) pixels — i.e. pixels that aren't just dark grey. Once
-    we find the body row, kill alpha below it."""
+    BRIGHT-OR-SATURATED pixels. Floor shadow has neither (it's just dark grey
+    pixels with no real colour). Once we find the body row, kill alpha
+    below it. Threshold is lenient so we don't chop legs by accident."""
     arr = np.array(img)
     alpha = arr[..., 3]
-    brightness = arr[..., :3].mean(axis=2)  # 0..255 mean RGB
-    body_mask = (alpha > 120) & (brightness > 100)  # solid alpha AND brighter than floor shadow
+    rgb = arr[..., :3].astype(np.int16)
+    brightness = rgb.mean(axis=2)
+    saturation = rgb.max(axis=2) - rgb.min(axis=2)  # span between R/G/B channels
+    # Body = solid alpha AND (bright OR coloured). Shadow is grey + dark = fails both.
+    body_mask = (alpha > 120) & ((brightness > 90) | (saturation > 40))
     row_counts = body_mask.sum(axis=1)
     if row_counts.max() == 0:
         return img
@@ -148,8 +153,8 @@ def trim_foot_shadow(img: Image.Image, min_row_pct: float = 0.18) -> Image.Image
     body_bottom = h - 1
     while body_bottom > 0 and row_counts[body_bottom] < threshold:
         body_bottom -= 1
-    # Keep 6px breathing room below the actual body
-    body_bottom = min(h - 1, body_bottom + 6)
+    # Keep 8px breathing room below the actual body
+    body_bottom = min(h - 1, body_bottom + 8)
     arr[body_bottom + 1:, ..., 3] = 0
     return Image.fromarray(arr, "RGBA")
 

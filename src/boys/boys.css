@@ -88,44 +88,77 @@
   pointer-events: none;
 }
 
-/* === Dance animations — translateX(-50%) is the anchor, dance adds to it === */
-.boy[data-dance='A'] { animation: danceA calc(var(--beat-ms) * 4) ease-in-out infinite; }
-.boy[data-dance='B'] { animation: danceB calc(var(--beat-ms) * 4) ease-in-out infinite; }
-.boy[data-dance='C'] { animation: danceC calc(var(--beat-ms) * 4) ease-in-out infinite; }
-.boy[data-dance='D'] { animation: danceD calc(var(--beat-ms) * 8) ease-in-out infinite; }
-.boy[data-dance='E'] { animation: danceE calc(var(--beat-ms) * 8) ease-in-out infinite; }
+/* === Dance animations === each boy has their OWN rhythm + amplitude +
+   horizontal wander so the group never feels like a single mechanical
+   metronome. Durations are intentionally non-multiples so the boys drift
+   in and out of phase with each other and with the beat — feels alive. */
+.boy[data-dance='A'] { animation: danceA calc(var(--beat-ms) * 9)  cubic-bezier(0.4, 0, 0.4, 1) infinite; }
+.boy[data-dance='B'] { animation: danceB calc(var(--beat-ms) * 7)  cubic-bezier(0.5, 0, 0.3, 1) infinite; }
+.boy[data-dance='C'] { animation: danceC calc(var(--beat-ms) * 4)  ease-in-out infinite; }
+.boy[data-dance='D'] { animation: danceD calc(var(--beat-ms) * 11) ease-in-out infinite; }
+.boy[data-dance='E'] { animation: danceE calc(var(--beat-ms) * 13) ease-in-out infinite; }
 
-/* Dancers (A, B) get big movement. DJ (C) bobs heavily. Bar folks (D, E) sway slowly. */
+/* Pepe — energetic full-body dance with thumb pumping + lateral wander.
+   The dance has a "step forward, step back" motion plus occasional jumps.
+   Includes a tiny pause at 60% (the breath between moves). */
 @keyframes danceA {
-  0%   { transform: translateX(-50%) translateY(0)     rotate(-6deg); }
-  25%  { transform: translateX(-50%) translateY(-14px) rotate(8deg); }
-  50%  { transform: translateX(-50%) translateY(-2px)  rotate(-4deg); }
-  75%  { transform: translateX(-50%) translateY(-12px) rotate(6deg); }
-  100% { transform: translateX(-50%) translateY(0)     rotate(-6deg); }
+  0%   { transform: translateX(calc(-50% + 0px))  translateY(0)     rotate(-5deg); }
+  12%  { transform: translateX(calc(-50% + 6px))  translateY(-16px) rotate(4deg); }
+  24%  { transform: translateX(calc(-50% + 10px)) translateY(-4px)  rotate(-3deg); }
+  36%  { transform: translateX(calc(-50% + 12px)) translateY(-12px) rotate(8deg); }
+  48%  { transform: translateX(calc(-50% + 4px))  translateY(-22px) rotate(-2deg); }
+  56%  { transform: translateX(calc(-50% + 2px))  translateY(-6px)  rotate(2deg); }   /* breath */
+  64%  { transform: translateX(calc(-50% - 4px))  translateY(-18px) rotate(-6deg); }
+  76%  { transform: translateX(calc(-50% - 10px)) translateY(-2px)  rotate(6deg); }
+  88%  { transform: translateX(calc(-50% - 6px))  translateY(-14px) rotate(-4deg); }
+  100% { transform: translateX(calc(-50% + 0px))  translateY(0)     rotate(-5deg); }
 }
+
+/* Maus — two-step shuffle with sway and a head-tilt thing.
+   Lateral movement is smaller because he's smaller in the frame. */
 @keyframes danceB {
-  0%   { transform: translateX(-50%) translateY(-10px) rotate(-8deg); }
-  25%  { transform: translateX(-50%) translateY(0)     rotate(6deg); }
-  50%  { transform: translateX(-50%) translateY(-16px) rotate(-10deg); }
-  75%  { transform: translateX(-50%) translateY(-2px)  rotate(8deg); }
-  100% { transform: translateX(-50%) translateY(-10px) rotate(-8deg); }
+  0%   { transform: translateX(-50%)              translateY(-2px)  rotate(-6deg); }
+  18%  { transform: translateX(calc(-50% - 4px))  translateY(-14px) rotate(8deg); }
+  32%  { transform: translateX(calc(-50% - 7px))  translateY(0)     rotate(-4deg); }
+  44%  { transform: translateX(calc(-50% - 3px))  translateY(-18px) rotate(7deg); }
+  56%  { transform: translateX(calc(-50% + 2px))  translateY(-6px)  rotate(-5deg); }
+  68%  { transform: translateX(calc(-50% + 6px))  translateY(-16px) rotate(10deg); }
+  82%  { transform: translateX(calc(-50% + 3px))  translateY(-4px)  rotate(-8deg); }
+  100% { transform: translateX(-50%)              translateY(-2px)  rotate(-6deg); }
 }
+
+/* Eggplant DJ — rhythmic head bob behind the decks, in tight 2-beat cycle.
+   Less lateral movement (he's stuck behind the pult), more vertical bob. */
 @keyframes danceC {
-  0%   { transform: translateX(-50%) translateY(0)     rotate(-5deg); }
-  25%  { transform: translateX(-50%) translateY(-12px) rotate(7deg); }
-  50%  { transform: translateX(-50%) translateY(-4px)  rotate(-3deg); }
-  75%  { transform: translateX(-50%) translateY(-14px) rotate(5deg); }
-  100% { transform: translateX(-50%) translateY(0)     rotate(-5deg); }
+  0%   { transform: translateX(-50%) translateY(0)     rotate(-4deg); }
+  25%  { transform: translateX(-50%) translateY(-10px) rotate(6deg); }
+  50%  { transform: translateX(-50%) translateY(-2px)  rotate(-3deg); }
+  75%  { transform: translateX(-50%) translateY(-12px) rotate(5deg); }
+  100% { transform: translateX(-50%) translateY(0)     rotate(-4deg); }
 }
+
+/* Andy bartender — subtle sway with a tiny lateral lean (reaching for bottles?).
+   Lower amplitude because he's working. */
 @keyframes danceD {
-  0%   { transform: translateX(-50%) translateY(-2px)  rotate(2deg); }
-  50%  { transform: translateX(-50%) translateY(-5px)  rotate(-3deg); }
-  100% { transform: translateX(-50%) translateY(-2px)  rotate(2deg); }
+  0%   { transform: translateX(-50%)              translateY(0)    rotate(-2deg); }
+  15%  { transform: translateX(calc(-50% + 3px))  translateY(-3px) rotate(2deg); }
+  30%  { transform: translateX(calc(-50% + 5px))  translateY(0)    rotate(-1deg); }
+  50%  { transform: translateX(calc(-50% + 1px))  translateY(-5px) rotate(3deg); }
+  70%  { transform: translateX(calc(-50% - 3px))  translateY(-1px) rotate(-2deg); }
+  85%  { transform: translateX(calc(-50% - 2px))  translateY(-4px) rotate(1deg); }
+  100% { transform: translateX(-50%)              translateY(0)    rotate(-2deg); }
 }
+
+/* Landwulf customer — laid-back sway, occasional dip (raising his drink).
+   Slowest cycle of all — he's vibing not dancing. */
 @keyframes danceE {
-  0%   { transform: translateX(-50%) translateY(-3px)  rotate(-2deg); }
-  50%  { transform: translateX(-50%) translateY(-6px)  rotate(3deg); }
-  100% { transform: translateX(-50%) translateY(-3px)  rotate(-2deg); }
+  0%   { transform: translateX(-50%)              translateY(-2px) rotate(-3deg); }
+  20%  { transform: translateX(calc(-50% - 3px))  translateY(0)    rotate(2deg); }
+  40%  { transform: translateX(calc(-50% - 5px))  translateY(-4px) rotate(-1deg); }
+  55%  { transform: translateX(calc(-50% - 4px))  translateY(-8px) rotate(4deg); }   /* drink raise */
+  72%  { transform: translateX(calc(-50% - 1px))  translateY(-2px) rotate(-3deg); }
+  88%  { transform: translateX(calc(-50% + 2px))  translateY(-5px) rotate(2deg); }
+  100% { transform: translateX(-50%)              translateY(-2px) rotate(-3deg); }
 }
 
 @keyframes boyPop {

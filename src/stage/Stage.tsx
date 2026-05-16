@@ -21,6 +21,7 @@ import { For, createSignal, createEffect, on } from 'solid-js';
 import { DiscoBall } from './DiscoBall';
 import { Boys } from '../boys/Boys';
 import { BubbleLayer } from '../bubbles/BubbleLayer';
+import { Fireworks } from './Fireworks';
 import { mood, lastBoyAction } from '../state';
 import './stage.css';
 
@@ -198,6 +199,9 @@ export function Stage() {
           )}
         </For>
       </div>
+
+      {/* Fireworks layer (behind boys, above back wall) */}
+      <Fireworks />
 
       <DiscoBall />
       <div class="dance-floor-glow" />

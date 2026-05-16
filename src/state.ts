@@ -143,6 +143,20 @@ export type BoyAction = {
 };
 export const [lastBoyAction, setLastBoyAction] = createSignal<BoyAction | null>(null);
 
+/** Disco-ball click → fireworks. ts = performance.now() to ensure each click
+ *  creates a fresh signal value the effect can react to. */
+export const [lastBallClick, setLastBallClick] = createSignal(0);
+
+export async function triggerDiscoBall(): Promise<void> {
+  await audio.init();
+  // Small celebratory pop: crash + brief filter sweep
+  const t = audio.ctx!.currentTime;
+  audio.crash(t, 0.7);
+  audio.crash(t + 0.18, 0.5);
+  audio.crash(t + 0.42, 0.6);
+  setLastBallClick(performance.now());
+}
+
 export async function triggerBoyAction(boyId: string): Promise<void> {
   await audio.init();
   audio.setMaster(volume() * volume());
