@@ -28,11 +28,13 @@ const ZONE_CONFIG: Record<Zone, {
   // Two front dancers, OUTSIDE the pult area horizontally (pult spans ~36-64%)
   'dancefloor-l':  { size: 'm',  left: '15%', bottom: '6%',  layer: 7 },
   'dancefloor-r':  { size: 'm',  left: '30%', bottom: '6%',  layer: 7 },
-  // Andy stands BEHIND the bar counter — like the DJ behind the decks
-  // (bar element is z-index 5 so its counter-front covers Andy's lower body)
-  'bar-keep':      { size: 'm',  left: '85%', bottom: '30%', layer: 4 },
-  // Landwulf hangs IN FRONT of the bar as a customer
-  'bar':           { size: 's',  left: '70%', bottom: '8%',  layer: 6 },
+  // Andy stands BEHIND the bar counter. Bar is now in the back-right
+  // corner with perspective, so Andy is FARTHER from camera → smaller (xs).
+  // His bottom % aligns with the new (higher) counter-top inside the bar.
+  'bar-keep':      { size: 's',  left: '83%', bottom: '37%', layer: 4 },
+  // Landwulf hangs IN FRONT of the bar as a customer — he's closer to
+  // camera than Andy, so he's bigger (m). Sized like the dance-floor boys.
+  'bar':           { size: 'm',  left: '70%', bottom: '6%',  layer: 6 },
 };
 
 export function Boys() {

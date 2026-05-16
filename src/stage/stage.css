@@ -504,15 +504,21 @@
    its counter-front covers his legs — mirror of the DJ-pult composition. */
 /* NO z-index on .bar itself — we don't want it to become a stacking context.
    Andy stands at z-index 4 and must be ABOVE the back wall/bottles (z=1)
-   but BELOW the counter-front (z=5). If the .bar wrapper has z-index, all
-   children jump to its stacking context and Andy ends up behind everything. */
+   but BELOW the counter-front (z=5).
+
+   PERSPECTIVE: the bar sits in the back-right corner of the room, so we
+   rotate it ~16° around the Y-axis. The LEFT edge stays close to camera,
+   the RIGHT edge recedes into the back wall. Bar is smaller now (it's
+   farther away from the viewer than the dance floor). */
 .bar {
   position: absolute;
-  bottom: 8%;
-  right: -10px;
-  width: 360px;
-  height: 360px;
+  bottom: 18%;
+  right: -20px;
+  width: 280px;
+  height: 270px;
   pointer-events: none;
+  transform: perspective(900px) rotateY(16deg);
+  transform-origin: left center;
 }
 
 /* === BACK WALL === wood-and-mirror panelled wall behind the bottles */
@@ -521,7 +527,7 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 180px;
+  height: 140px;
   background:
     /* subtle vertical wood-panel seams */
     repeating-linear-gradient(90deg,
@@ -558,13 +564,13 @@
 /* === "BAR" NEON SIGN === flickers like real neon */
 .bar-neon {
   position: absolute;
-  top: 14px;
+  top: 10px;
   left: 50%;
   transform: translateX(-50%);
   font-family: inherit;
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 900;
-  letter-spacing: 14px;
+  letter-spacing: 10px;
   color: var(--pink);
   text-shadow:
     0 0 8px var(--pink),
@@ -586,17 +592,17 @@
 /* === SHELVES with bottles === two rows behind the bartender */
 .bar-shelves {
   position: absolute;
-  top: 48px;
-  left: 14px;
-  right: 14px;
-  height: 124px;
+  top: 38px;
+  left: 10px;
+  right: 10px;
+  height: 96px;
   z-index: 2;
 }
 .bar-shelf {
   position: absolute;
   left: 0;
   right: 0;
-  height: 54px;
+  height: 42px;
   /* the shelf board itself — a thin lit edge */
   border-bottom: 2px solid rgba(0, 240, 255, 0.45);
   box-shadow:
@@ -604,14 +610,14 @@
     0 0 8px rgba(0, 240, 255, 0.18);
 }
 .bar-shelf-top { top: 0; }
-.bar-shelf-bot { top: 62px; }
+.bar-shelf-bot { top: 50px; }
 
 /* Bottle silhouettes — each a tall narrow gradient shape with a colored body */
 .bottle {
   position: absolute;
   bottom: 4px;
-  width: 12px;
-  height: 44px;
+  width: 10px;
+  height: 34px;
   background: linear-gradient(180deg,
     var(--bot-color, var(--pink)) 0%,
     color-mix(in srgb, var(--bot-color, var(--pink)) 70%, #000 30%) 70%,
@@ -650,32 +656,32 @@
 }
 /* Bottle colours + positions — staggered across the shelves */
 .bar-shelf-top .bottle:nth-child(1) { --bot-color: var(--pink);     left: 4%;  }
-.bar-shelf-top .bottle:nth-child(2) { --bot-color: var(--cyan);     left: 14%; height: 40px; }
+.bar-shelf-top .bottle:nth-child(2) { --bot-color: var(--cyan);     left: 14%; height: 30px; }
 .bar-shelf-top .bottle:nth-child(3) { --bot-color: var(--yellow);   left: 24%; }
-.bar-shelf-top .bottle:nth-child(4) { --bot-color: var(--green);    left: 35%; height: 38px; }
-.bar-shelf-top .bottle:nth-child(5) { --bot-color: var(--eggplant); left: 46%; height: 46px; }
+.bar-shelf-top .bottle:nth-child(4) { --bot-color: var(--green);    left: 35%; height: 28px; }
+.bar-shelf-top .bottle:nth-child(5) { --bot-color: var(--eggplant); left: 46%; height: 36px; }
 .bar-shelf-top .bottle:nth-child(6) { --bot-color: var(--orange);   left: 58%; }
-.bar-shelf-top .bottle:nth-child(7) { --bot-color: var(--pink);     left: 70%; height: 40px; }
+.bar-shelf-top .bottle:nth-child(7) { --bot-color: var(--pink);     left: 70%; height: 30px; }
 .bar-shelf-top .bottle:nth-child(8) { --bot-color: var(--cyan);     left: 82%; }
-.bar-shelf-top .bottle:nth-child(9) { --bot-color: var(--yellow);   left: 92%; height: 42px; }
+.bar-shelf-top .bottle:nth-child(9) { --bot-color: var(--yellow);   left: 92%; height: 32px; }
 
 .bar-shelf-bot .bottle:nth-child(1) { --bot-color: var(--eggplant); left: 2%;  }
-.bar-shelf-bot .bottle:nth-child(2) { --bot-color: var(--green);    left: 12%; height: 46px; }
-.bar-shelf-bot .bottle:nth-child(3) { --bot-color: var(--pink);     left: 22%; height: 38px; }
+.bar-shelf-bot .bottle:nth-child(2) { --bot-color: var(--green);    left: 12%; height: 36px; }
+.bar-shelf-bot .bottle:nth-child(3) { --bot-color: var(--pink);     left: 22%; height: 28px; }
 .bar-shelf-bot .bottle:nth-child(4) { --bot-color: var(--orange);   left: 32%; }
-.bar-shelf-bot .bottle:nth-child(5) { --bot-color: var(--cyan);     left: 42%; height: 44px; }
+.bar-shelf-bot .bottle:nth-child(5) { --bot-color: var(--cyan);     left: 42%; height: 34px; }
 .bar-shelf-bot .bottle:nth-child(6) { --bot-color: var(--yellow);   left: 53%; }
-.bar-shelf-bot .bottle:nth-child(7) { --bot-color: var(--green);    left: 64%; height: 42px; }
+.bar-shelf-bot .bottle:nth-child(7) { --bot-color: var(--green);    left: 64%; height: 32px; }
 .bar-shelf-bot .bottle:nth-child(8) { --bot-color: var(--eggplant); left: 76%; }
-.bar-shelf-bot .bottle:nth-child(9) { --bot-color: var(--pink);     left: 88%; height: 40px; }
+.bar-shelf-bot .bottle:nth-child(9) { --bot-color: var(--pink);     left: 88%; height: 30px; }
 
 /* === GLASS RACK === hanging glasses above the counter (in front of Andy) */
 .bar-glasses {
   position: absolute;
-  top: 156px;  /* just below the shelves, above the counter */
-  left: 14px;
-  right: 14px;
-  height: 18px;
+  top: 122px;  /* just below the shelves, above the counter */
+  left: 10px;
+  right: 10px;
+  height: 14px;
   z-index: 6;  /* in front of Andy who is behind the counter */
   /* Rail */
   border-top: 2px solid rgba(255, 255, 255, 0.25);
@@ -683,9 +689,9 @@
 }
 .glass {
   position: absolute;
-  top: 2px;
-  width: 10px;
-  height: 14px;
+  top: 1px;
+  width: 8px;
+  height: 11px;
   background: linear-gradient(180deg,
     rgba(255, 255, 255, 0.55) 0%,
     rgba(255, 255, 255, 0.15) 60%,
@@ -707,7 +713,7 @@
 /* === COUNTER TOP === narrow surface visible between Andy and the front */
 .bar-counter-top {
   position: absolute;
-  top: 180px;
+  top: 140px;
   left: 0;
   right: 0;
   height: 14px;
@@ -737,10 +743,10 @@
 /* Beer tap on the counter */
 .bar-tap {
   position: absolute;
-  top: 154px;
-  right: 30px;
-  width: 8px;
-  height: 28px;
+  top: 118px;
+  right: 24px;
+  width: 7px;
+  height: 22px;
   background: linear-gradient(180deg, #aaa 0%, #555 70%, #333 100%);
   border-radius: 2px 2px 1px 1px;
   z-index: 6;
@@ -774,10 +780,10 @@
 /* A drink (martini glass) sitting on the counter */
 .bar-drink {
   position: absolute;
-  top: 168px;
-  left: 20%;
-  width: 12px;
-  height: 14px;
+  top: 130px;
+  left: 22%;
+  width: 10px;
+  height: 12px;
   background:
     radial-gradient(ellipse 6px 3px at 50% 95%, rgba(255, 242, 0, 0.95), transparent 70%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.1) 100%);
@@ -791,7 +797,7 @@
    him look like a bartender standing behind the bar. */
 .bar-counter-front {
   position: absolute;
-  top: 194px;
+  top: 150px;
   left: 0;
   right: 0;
   bottom: 0;
@@ -815,9 +821,9 @@
   left: 50%;
   transform: translate(-50%, -50%);
   font-family: inherit;
-  font-size: 14px;
+  font-size: 11px;
   font-weight: 900;
-  letter-spacing: 5px;
+  letter-spacing: 3px;
   color: var(--pink);
   text-shadow:
     0 0 6px var(--pink),
@@ -828,10 +834,10 @@
 /* === BARSTOOL in front of the counter — Landwulf can lean on it */
 .bar-stool {
   position: absolute;
-  bottom: -34px;
-  left: 18px;
-  width: 18px;
-  height: 80px;
+  bottom: -28px;
+  left: 14px;
+  width: 14px;
+  height: 64px;
   background: linear-gradient(180deg, #1a0028 0%, #0a000f 100%);
   border-radius: 4px 4px 2px 2px;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
