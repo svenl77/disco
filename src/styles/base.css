@@ -47,6 +47,138 @@ input[type='range'] {
   cursor: pointer;
 }
 
+/* === START OVERLAY === gates the page with a single click that unlocks
+   Web Audio. Big rotating disco-ball-like glow, big CTA button. */
+.start-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: radial-gradient(ellipse at center, rgba(60, 0, 100, 0.96), rgba(0, 0, 0, 0.99));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 12px;
+  text-align: center;
+  animation: startOverlayIn 0.4s ease-out;
+}
+.start-overlay.closing {
+  animation: startOverlayOut 0.6s ease-in forwards;
+  pointer-events: none;
+}
+@keyframes startOverlayIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes startOverlayOut {
+  to { opacity: 0; transform: scale(1.05); }
+}
+
+.start-ball {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 30% 24%,
+    #ffffff 0%, #c4d2e8 12%, #6a7a95 38%, #1a2030 80%, #08101e 100%);
+  box-shadow:
+    0 0 32px rgba(0, 240, 255, 0.55),
+    0 0 60px rgba(255, 43, 214, 0.55),
+    0 0 100px rgba(255, 242, 0, 0.25),
+    inset -10px -10px 28px rgba(0, 0, 0, 0.65);
+  overflow: hidden;
+  filter: drop-shadow(0 0 14px rgba(255, 43, 214, 0.4));
+}
+.start-ball-mer {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    repeating-linear-gradient(0deg,  transparent 0 11px, rgba(0,0,0,0.55) 11px 12px),
+    repeating-linear-gradient(90deg, transparent 0 11px, rgba(0,0,0,0.55) 11px 12px);
+  mix-blend-mode: multiply;
+  -webkit-mask-image: radial-gradient(circle, #000 60%, transparent 96%);
+          mask-image: radial-gradient(circle, #000 60%, transparent 96%);
+  animation: startBallSpin 4s linear infinite;
+}
+.start-ball-glow {
+  position: absolute;
+  inset: -50%;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent, rgba(255, 43, 214, 0.45), transparent,
+    rgba(0, 240, 255, 0.45), transparent,
+    rgba(255, 242, 0, 0.4), transparent
+  );
+  filter: blur(40px);
+  z-index: -1;
+  animation: startBallSpin 10s linear infinite;
+}
+@keyframes startBallSpin {
+  to { transform: rotate(360deg); }
+}
+
+.start-title {
+  font-size: clamp(28px, 6vw, 56px);
+  letter-spacing: 8px;
+  font-weight: 900;
+  margin: 22px 0 4px;
+  background: linear-gradient(90deg, var(--pink), var(--yellow), var(--cyan), var(--pink));
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: titleShine 4s linear infinite;
+}
+.start-sub {
+  font-size: 12px;
+  letter-spacing: 4px;
+  color: var(--cyan);
+  margin: 0 0 26px;
+  text-transform: uppercase;
+}
+.start-btn {
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: 4px;
+  padding: 14px 36px;
+  border-radius: 28px;
+  border: 2px solid var(--green);
+  background: rgba(0, 0, 0, 0.4);
+  color: var(--green);
+  cursor: pointer;
+  box-shadow: 0 0 18px rgba(57, 255, 20, 0.45);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: transform 0.1s ease, box-shadow 0.15s ease;
+  animation: startBtnPulse 1.2s ease-in-out infinite alternate;
+}
+.start-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 36px rgba(57, 255, 20, 0.85);
+}
+.start-btn span {
+  font-size: 18px;
+  color: var(--pink);
+  text-shadow: 0 0 8px var(--pink);
+}
+@keyframes startBtnPulse {
+  from { box-shadow: 0 0 14px rgba(57, 255, 20, 0.4); }
+  to   { box-shadow: 0 0 36px rgba(57, 255, 20, 0.9); }
+}
+.start-hint {
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: rgba(255, 255, 255, 0.45);
+  margin: 20px 0 0;
+}
+
 /* shared header style */
 .app-header {
   text-align: center;

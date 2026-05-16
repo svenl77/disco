@@ -1,6 +1,7 @@
 import { createSignal, onMount } from 'solid-js';
 import { Stage } from './stage/Stage';
 import { MusicPanel } from './music/MusicPanel';
+import { StartOverlay } from './StartOverlay';
 import { applySet } from './share/ShareBar';
 import { setFromCurrentURL } from './share/serialize';
 
@@ -30,6 +31,7 @@ export function App() {
 
   return (
     <>
+      <StartOverlay />
       <header class="app-header">
         <h1 class="app-title">$DISCO · BOYS CLUB 🪩</h1>
         <div class="app-subtitle">STAYIN ALIVE · ON-CHAIN · DANCE OR DIE</div>

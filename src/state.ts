@@ -28,7 +28,8 @@ export const audio = new AudioEngine();
 export const seq = new Sequencer(audio);
 
 // === Music state ===
-export const [bpm, setBpm] = createSignal(120);
+// 124 BPM = progressive-house sweet spot
+export const [bpm, setBpm] = createSignal(124);
 export const [volume, setVolume] = createSignal(0.75);
 export const [filter, setFilter] = createSignal(8000);
 export const [reverb, setReverb] = createSignal(0.22);
@@ -43,12 +44,20 @@ export const [patternsVersion, setPatternsVersion] = createSignal(0);
 /** Pattern Bank state — A..H named patterns, each holds its own 8-track grid. */
 export const [patternBank, setPatternBank] = createSignal<PatternBank>(buildInitialBank());
 
-/** The song is a list of slots: { patternId, bars }. */
+/** The song is a list of slots: { patternId, bars }.
+ *  Default arrangement = full progressive-house track:
+ *   A intro 8 bars → B verse 8 → C build 4 → D drop 8 → E break 4 →
+ *   F hook 8 → D drop 8 → G riser 2 → (loop)
+ *  ~65 seconds at 124 BPM, then repeats from the top. */
 export const [song, setSong] = createSignal<Song>([
-  { patternId: 'A', bars: 4 },
-  { patternId: 'B', bars: 4 },
+  { patternId: 'A', bars: 8 },
+  { patternId: 'B', bars: 8 },
   { patternId: 'C', bars: 4 },
-  { patternId: 'D', bars: 4 },
+  { patternId: 'D', bars: 8 },
+  { patternId: 'E', bars: 4 },
+  { patternId: 'F', bars: 8 },
+  { patternId: 'D', bars: 8 },
+  { patternId: 'G', bars: 2 },
 ]);
 
 /** Which pattern slot is currently sounding (read from sequencer in real-time) */
@@ -84,30 +93,150 @@ export const intensity = createMemo<number>(() => {
 });
 
 function buildInitialBank(): PatternBank {
-  // Seed the bank with our 6 presets — A=DISCO INFERNO, B=STAYIN ALIVE, etc.
-  // remaining slots get empty patterns.
-  const presetNames = Object.keys(PRESETS);
-  const bank = {} as PatternBank;
-  PATTERN_IDS.forEach((id, i) => {
-    const presetName = presetNames[i];
-    bank[id] = {
-      id,
-      name: presetName ?? DEFAULT_PATTERN_NAMES[id],
-      patterns: presetName
-        ? clonePatterns(PRESETS[presetName])
-        : {
-            kick:    Array(16).fill(false),
-            snare:   Array(16).fill(false),
-            clap:    Array(16).fill(false),
-            hatC:    Array(16).fill(false),
-            hatO:    Array(16).fill(false),
-            cowbell: Array(16).fill(false),
-            bass:    Array(16).fill(null),
-            lead:    Array(16).fill(null),
-            chord:   Array(16).fill(null),
-          },
-    };
-  });
+  /**
+   * Progressive-house club composition seeded into the bank A–H.
+   * Designed as a complete arrangement — A intro → B verse → C build →
+   * D drop → E breakdown → F hook → D drop again → G riser → loop.
+   *
+   * Notation helpers:
+   *   b(...)  → drum row (0/1 → false/true)
+   *   ns(...) → note row (string or null)
+   */
+  const b = (...arr: number[]): boolean[] => arr.map(Boolean);
+  const ns = (...arr: (string | null)[]): (string | null)[] => arr;
+  const _ = null;
+  const E = (): boolean[] => Array(16).fill(false);
+  const N = (): (string | null)[] => Array(16).fill(null);
+
+  const bank: PatternBank = {
+    // === A: INTRO === minimal, ambient, half-time feel — anticipation
+    A: {
+      id: 'A', name: 'INTRO',
+      patterns: {
+        kick:    b(1,0,0,0, 0,0,0,0, 1,0,0,0, 0,0,0,0),
+        snare:   E(),
+        clap:    E(),
+        hatC:    b(0,0,1,0, 0,0,1,0, 0,0,1,0, 0,0,1,0),
+        hatO:    E(),
+        cowbell: E(),
+        bass:    ns('C2',_,_,_, _,_,_,_, 'G2',_,_,_, _,_,_,_),
+        lead:    N(),
+        chord:   ns('Cm9',_,_,_, _,_,_,_, 'Fm7',_,_,_, _,_,_,_),
+      },
+    },
+
+    // === B: VERSE === full 4-on-floor house groove
+    B: {
+      id: 'B', name: 'VERSE',
+      patterns: {
+        kick:    b(1,0,0,0, 1,0,0,0, 1,0,0,0, 1,0,0,0),
+        snare:   b(0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0),
+        clap:    b(0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0),
+        hatC:    b(0,0,1,0, 0,0,1,0, 0,0,1,0, 0,0,1,0),
+        hatO:    b(0,0,0,0, 0,0,0,1, 0,0,0,0, 0,0,0,1),
+        cowbell: E(),
+        bass:    ns('C2',_,_,_, 'C2',_,_,_, 'G2',_,_,_, 'F2',_,_,_),
+        lead:    N(),
+        chord:   ns('Cm9',_,_,_, _,_,_,_, 'Fm7',_,_,_, _,_,_,_),
+      },
+    },
+
+    // === C: BUILD === tension, climbing bass, ascending lead arp
+    C: {
+      id: 'C', name: 'BUILD',
+      patterns: {
+        kick:    b(1,0,0,0, 1,0,0,0, 1,0,0,0, 1,0,0,1),
+        snare:   b(0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,1,1),
+        clap:    b(0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0),
+        hatC:    b(0,0,1,0, 0,0,1,0, 0,0,1,0, 1,0,1,1),
+        hatO:    b(0,0,0,0, 0,0,0,1, 0,0,0,0, 0,0,0,1),
+        cowbell: b(0,0,0,1, 0,0,0,1, 0,0,0,1, 0,0,0,1),
+        bass:    ns('C2',_,_,_, 'C2',_,_,_, 'G2',_,'F2',_, 'E2',_,'D2',_),
+        lead:    ns('C5',_,_,_, 'D#5',_,_,_, 'G5',_,_,_, 'A#5',_,_,_),
+        chord:   ns('Cm9',_,_,_, _,_,_,_, 'Cm9',_,_,_, _,_,_,_),
+      },
+    },
+
+    // === D: DROP === peak energy, 16th hihats, acid bass, chord stabs
+    D: {
+      id: 'D', name: 'DROP',
+      patterns: {
+        kick:    b(1,0,0,0, 1,0,0,0, 1,0,0,0, 1,0,0,0),
+        snare:   b(0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,1),
+        clap:    b(0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0),
+        hatC:    b(1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1),
+        hatO:    b(0,0,0,0, 0,0,0,1, 0,0,0,0, 0,0,0,1),
+        cowbell: E(),
+        bass:    ns('C2','C2',_,'D#2', 'C2',_,'G2','C2', 'A#2',_,'G2','F2', 'C2',_,'D#2','F2'),
+        lead:    ns(_,_,'C5',_, 'D#5',_,_,'G5', _,_,'A#5',_, _,'G5',_,'D#5'),
+        chord:   ns('Cm9',_,_,_, 'Fm7',_,_,_, 'Cm9',_,_,_, 'Gm7',_,_,_),
+      },
+    },
+
+    // === E: BREAKDOWN === drop the drums, emotional melody
+    E: {
+      id: 'E', name: 'BREAK',
+      patterns: {
+        kick:    E(),
+        snare:   E(),
+        clap:    E(),
+        hatC:    b(0,0,0,0, 0,0,1,0, 0,0,0,0, 0,0,1,0),
+        hatO:    E(),
+        cowbell: E(),
+        bass:    ns('C2',_,_,_, _,_,_,_, 'F2',_,_,_, _,_,_,_),
+        lead:    ns('C5',_,_,'D#5', _,'G5',_,'D#5', 'F5',_,'A5',_, 'G5',_,'D#5',_),
+        chord:   ns('Cm9',_,_,_, _,_,_,_, 'Fm7',_,_,_, _,_,_,_),
+      },
+    },
+
+    // === F: HOOK === melodic chorus with singalong lead
+    F: {
+      id: 'F', name: 'HOOK',
+      patterns: {
+        kick:    b(1,0,0,0, 1,0,0,0, 1,0,0,0, 1,0,0,0),
+        snare:   b(0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0),
+        clap:    b(0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0),
+        hatC:    b(0,0,1,0, 0,0,1,0, 0,0,1,0, 0,0,1,0),
+        hatO:    b(0,0,0,0, 0,0,0,1, 0,0,0,0, 0,0,0,1),
+        cowbell: E(),
+        bass:    ns('C2',_,'C2',_, 'F2',_,'F2',_, 'G2',_,'G2',_, 'C2',_,_,_),
+        lead:    ns('C5',_,'D#5','G5', _,'A5',_,'G5', 'F5',_,'D#5',_, 'D5',_,'D#5',_),
+        chord:   ns('Cm9',_,_,_, 'Fm7',_,_,_, 'Gm7',_,_,_, 'Cm9',_,_,_),
+      },
+    },
+
+    // === G: RISER === transition into the next drop, accelerating drums
+    G: {
+      id: 'G', name: 'RISE',
+      patterns: {
+        kick:    b(0,0,0,0, 0,0,0,0, 0,0,0,0, 1,1,1,1),
+        snare:   b(0,0,0,0, 0,0,0,0, 1,0,1,0, 1,1,1,1),
+        clap:    b(0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,1),
+        hatC:    b(0,0,0,1, 0,0,1,0, 0,1,1,1, 1,1,1,1),
+        hatO:    E(),
+        cowbell: E(),
+        bass:    ns('C2',_,_,_, _,_,_,_, _,_,_,_, 'G2',_,_,_),
+        lead:    N(),
+        chord:   N(),
+      },
+    },
+
+    // === H: OUTRO === gentle fade, kept for the user to extend with
+    H: {
+      id: 'H', name: 'OUTRO',
+      patterns: {
+        kick:    b(1,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0),
+        snare:   E(),
+        clap:    E(),
+        hatC:    b(0,0,1,0, 0,0,0,0, 0,0,1,0, 0,0,0,0),
+        hatO:    E(),
+        cowbell: E(),
+        bass:    ns('C2',_,_,_, _,_,_,_, _,_,_,_, _,_,_,_),
+        lead:    N(),
+        chord:   ns('Cm9',_,_,_, _,_,_,_, _,_,_,_, _,_,_,_),
+      },
+    },
+  };
   return bank;
 }
 
@@ -471,4 +600,4 @@ export function newSong(): void {
 }
 
 // Initial BPM application
-seq.setBPM(120);
+seq.setBPM(124);
