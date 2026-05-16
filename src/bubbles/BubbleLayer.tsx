@@ -37,16 +37,21 @@ export function BubbleLayer() {
     setTimeout(() => setBubbles((prev) => prev.filter((b) => b.id !== id)), 3400);
   };
 
-  // Random idle chatter every bar while playing
+  // Random idle chatter — fire every bar while playing, often two at once
   createEffect(
     on(barCount, () => {
       if (!isPlaying()) return;
-      if (Math.random() < 0.6) {
-        const boy = BOYS[Math.floor(Math.random() * BOYS.length)];
-        const m = mood();
-        const spruchMood: SpruchMood =
-          m === 'acid' ? (Math.random() < 0.5 ? 'acid' : 'idle') : m === 'hype' ? 'hype' : 'idle';
-        add(boy.id as BoyId, spruchMood);
+      const m = mood();
+      const spruchMood: SpruchMood =
+        m === 'acid' ? (Math.random() < 0.5 ? 'acid' : 'idle') : m === 'hype' ? 'hype' : 'idle';
+      // One bubble per bar guaranteed
+      const boy = BOYS[Math.floor(Math.random() * BOYS.length)];
+      add(boy.id as BoyId, spruchMood);
+      // 50% chance of a second bubble from a different boy mid-bar
+      if (Math.random() < 0.5) {
+        const others = BOYS.filter((b) => b.id !== boy.id);
+        const second = others[Math.floor(Math.random() * others.length)];
+        setTimeout(() => add(second.id as BoyId, spruchMood), 900);
       }
     }),
   );
