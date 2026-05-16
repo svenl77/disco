@@ -60,13 +60,28 @@ export function Stage() {
       {/* Back wall + ceiling */}
       <div class="room-back" />
 
-      {/* DJ stage at back centre — raised platform, decks, speakers */}
-      <div class="dj-stage">
-        <div class="dj-pult">
-          <div class="deck deck-l" />
-          <div class="deck deck-r" />
-          <div class="mixer" />
-          <div class="dj-label">$DISCO</div>
+      {/* DJ stage at back centre — raised platform where Eggplant stands */}
+      <div class="dj-stage" />
+      {/* DJ pult — IN FRONT of the DJ (Eggplant), with detailed turntables */}
+      <div class="dj-pult">
+        <div class="dj-label">$DISCO</div>
+        <div class="deck deck-l" />
+        <div class="tonearm tonearm-l" />
+        <div class="deck deck-r" />
+        <div class="tonearm tonearm-r" />
+        <div class="mixer">
+          <div class="mixer-knobs">
+            <span class="mixer-knob" />
+            <span class="mixer-knob" />
+            <span class="mixer-knob" />
+            <span class="mixer-knob" />
+            <span class="mixer-knob" />
+            <span class="mixer-knob" />
+          </div>
+          <div class="mixer-vu">
+            <span /><span /><span /><span /><span />
+          </div>
+          <div class="mixer-fader" />
         </div>
       </div>
       <div class="speaker stack-l" />

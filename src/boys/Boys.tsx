@@ -21,9 +21,10 @@ const ZONE_CONFIG: Record<Zone, {
   bottom: string;
   layer: number; // higher = in front
 }> = {
-  // Eggplant is the DJ — bottom % = top of dj-stage so his feet land on the platform.
-  // Slightly smaller because he's "deeper into the scene" + on a raised platform.
-  'dj':            { size: 'm',  left: '50%', bottom: '54%', layer: 4 },
+  // Eggplant is the DJ — feet on top of the dj-stage platform.
+  // The dj-pult sits IN FRONT of him (higher z-index) so he visually stands
+  // behind the decks rather than on top of them.
+  'dj':            { size: 'm',  left: '50%', bottom: '42%', layer: 4 },
   // Two dancers — closer to camera, bigger
   'dancefloor-l':  { size: 'l',  left: '24%', bottom: '6%',  layer: 7 },
   'dancefloor-r':  { size: 'l',  left: '44%', bottom: '6%',  layer: 7 },

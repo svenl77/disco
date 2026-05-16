@@ -6,7 +6,7 @@
  * Double-click to rename a slot inline.
  */
 import { For, createSignal } from 'solid-js';
-import { editingPatternId, playingPatternId, selectPattern, patternBank, renamePattern } from '../state';
+import { editingPatternId, playingPatternId, selectPattern, patternBank, renamePattern, clearBankSlot } from '../state';
 import { PATTERN_COLORS, PATTERN_IDS, type PatternId } from '../audio/song';
 
 export function PatternBank() {
@@ -28,6 +28,11 @@ function BankSlot(props: { id: PatternId }) {
     if (!inputEl) return;
     renamePattern(props.id, inputEl.value.toUpperCase().slice(0, 8) || props.id);
     setEditing(false);
+  }
+
+  function onClear(e: MouseEvent) {
+    e.stopPropagation();
+    clearBankSlot(props.id);
   }
 
   return (
@@ -55,6 +60,12 @@ function BankSlot(props: { id: PatternId }) {
       ) : (
         <span class="bank-slot-name">{name()}</span>
       )}
+      <span
+        class="bank-slot-clear"
+        title={`Clear pattern ${props.id}`}
+        onClick={onClear}
+        role="button"
+      >×</span>
     </button>
   );
 }

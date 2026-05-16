@@ -109,14 +109,14 @@
 }
 @keyframes starsTwinkle { from { opacity: 0.3; } to { opacity: 0.9; } }
 
-/* === DJ STAGE === a raised platform centred at back */
+/* === DJ STAGE === a raised platform at the back where the DJ stands === */
 .dj-stage {
   position: absolute;
-  bottom: 36%;
+  bottom: 32%;
   left: 50%;
   transform: translateX(-50%);
-  width: 280px;
-  height: 90px;
+  width: 320px;
+  height: 70px;
   background:
     linear-gradient(180deg,
       #2a0050 0%,
@@ -146,72 +146,280 @@
 }
 @keyframes stageLedShift { to { background-position: 200% 0; } }
 
-/* === DJ PULT — turntables + mixer in front of the DJ === */
+/* === DJ PULT — IN FRONT of the DJ, covering his lower body so he looks
+       like he's standing BEHIND the decks. z-index higher than the Boy. === */
 .dj-pult {
   position: absolute;
-  bottom: -34px;
+  bottom: 30%;          /* sits right at the stage edge, at Eggplant's waist */
   left: 50%;
   transform: translateX(-50%);
-  width: 210px;
-  height: 50px;
-  background: linear-gradient(180deg, #1a1a22 0%, #08080d 100%);
-  border: 1.5px solid rgba(255, 43, 214, 0.4);
-  border-radius: 4px;
+  width: 360px;
+  height: 92px;
+  background:
+    linear-gradient(180deg,
+      #2a2a35 0%,
+      #1a1a22 30%,
+      #0c0c12 100%);
+  border: 1.5px solid rgba(255, 43, 214, 0.5);
+  border-radius: 8px;
   box-shadow:
-    0 4px 18px rgba(0, 0, 0, 0.6),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  z-index: 2;
+    0 6px 22px rgba(0, 0, 0, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 0 18px rgba(0, 240, 255, 0.2);
+  z-index: 5;  /* IN FRONT of the boys (.boy.dj is z-index 4) */
 }
+/* Top LED strip on the pult */
+.dj-pult::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 8px;
+  right: 8px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--cyan), var(--pink), var(--cyan), transparent);
+  box-shadow: 0 0 8px var(--cyan);
+}
+/* Front-facing $DISCO label on the pult */
+.dj-pult::after {
+  content: '$DISCO';
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: inherit;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 5px;
+  color: var(--pink);
+  text-shadow: 0 0 6px var(--pink);
+}
+
+/* === TURNTABLES — big detailed vinyl decks === */
 .deck {
   position: absolute;
   top: 8px;
-  width: 32px;
-  height: 32px;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background:
+    /* outer ring (platter rim) */
+    radial-gradient(circle at 50% 50%,
+      transparent 0%,
+      transparent 46%,
+      #2a2a35 47%,
+      #1a1a22 50%,
+      #444 52%,
+      #1a1a22 54%,
+      transparent 55%),
+    /* the vinyl itself — grooves */
+    repeating-radial-gradient(circle at 50% 50%,
+      #0a0a0e 0px,
+      #0a0a0e 1px,
+      #16161c 1px,
+      #16161c 2px),
+    /* base */
+    radial-gradient(circle at 50% 50%, #14141a, #08080d);
+  box-shadow:
+    inset 0 0 8px rgba(255, 255, 255, 0.08),
+    inset 0 0 18px rgba(0, 0, 0, 0.8),
+    0 2px 6px rgba(0, 0, 0, 0.7);
+  animation: deckSpin 1.4s linear infinite;
+}
+/* The center label of the record */
+.deck::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background:
     radial-gradient(circle at 50% 50%,
-      #000 0%, #000 30%,
-      #444 32%, #222 60%, #000 100%);
-  box-shadow: inset 0 0 4px rgba(255, 255, 255, 0.15);
-  animation: deckSpin 1.4s linear infinite;
+      var(--pink) 0%,
+      var(--pink) 35%,
+      #6b0050 36%,
+      #6b0050 60%,
+      var(--pink) 61%,
+      var(--pink) 70%,
+      #6b0050 71%,
+      #6b0050 100%);
+  box-shadow:
+    0 0 6px var(--pink),
+    inset 0 0 4px rgba(0, 0, 0, 0.5);
+  transform: translate(-50%, -50%);
 }
+/* The center hole + spindle */
 .deck::after {
   content: '';
   position: absolute;
   top: 50%; left: 50%;
-  width: 8px;
-  height: 8px;
+  width: 4px;
+  height: 4px;
   border-radius: 50%;
-  background: var(--pink);
-  box-shadow: 0 0 6px var(--pink);
+  background: #000;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.9);
   transform: translate(-50%, -50%);
+  z-index: 2;
 }
-.deck-l { left: 10px; }
-.deck-r { right: 10px; }
+.deck-l { left: 18px; }
+.deck-r { right: 18px; }
 @keyframes deckSpin { to { transform: rotate(360deg); } }
 
-.mixer {
+/* Tonearm — does NOT rotate with the deck */
+.tonearm {
   position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80px;
-  height: 28px;
-  background: linear-gradient(180deg, #2a2a35, #14141a);
-  border-radius: 3px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  top: 6px;
+  width: 76px;
+  height: 76px;
+  pointer-events: none;
 }
-.mixer::before, .mixer::after {
+.tonearm-l { left: 12px; }
+.tonearm-r { right: 12px; }
+.tonearm::before {
+  /* the arm itself */
   content: '';
   position: absolute;
   top: 8px;
-  width: 2px;
-  height: 12px;
-  background: var(--cyan);
-  box-shadow: 0 0 4px var(--cyan);
+  right: 4px;
+  width: 36px;
+  height: 3px;
+  background: linear-gradient(90deg, #888 0%, #ccc 50%, #888 100%);
+  border-radius: 1.5px;
+  transform-origin: right center;
+  transform: rotate(-22deg);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+  animation: tonearmJiggle 4s ease-in-out infinite alternate;
 }
-.mixer::before { left: 18px; }
-.mixer::after  { right: 18px; }
+.tonearm::after {
+  /* the pivot / cartridge */
+  content: '';
+  position: absolute;
+  top: 4px;
+  right: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #aaa, #333);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
+}
+@keyframes tonearmJiggle {
+  from { transform: rotate(-22deg); }
+  to   { transform: rotate(-19deg); }
+}
+
+/* === MIXER — between the two decks === */
+.mixer {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 180px;
+  height: 64px;
+  background:
+    linear-gradient(180deg,
+      #2a2a35 0%,
+      #1a1a22 40%,
+      #0e0e14 100%);
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.6);
+}
+/* EQ knob row at the top of the mixer */
+.mixer-knobs {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  right: 6px;
+  display: flex;
+  justify-content: space-around;
+  gap: 4px;
+}
+.mixer-knob {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #aaa, #333);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  position: relative;
+}
+.mixer-knob::after {
+  /* indicator notch on the knob */
+  content: '';
+  position: absolute;
+  top: 1.5px;
+  left: 50%;
+  width: 2px;
+  height: 4px;
+  background: var(--cyan);
+  border-radius: 1px;
+  box-shadow: 0 0 3px var(--cyan);
+  transform: translateX(-50%) rotate(var(--knob-rot, 0deg));
+  transform-origin: center 4px;
+}
+.mixer-knob:nth-child(1)::after { --knob-rot: -45deg; }
+.mixer-knob:nth-child(2)::after { --knob-rot: 0deg; }
+.mixer-knob:nth-child(3)::after { --knob-rot: 30deg; }
+.mixer-knob:nth-child(4)::after { --knob-rot: -20deg; }
+.mixer-knob:nth-child(5)::after { --knob-rot: 60deg; }
+.mixer-knob:nth-child(6)::after { --knob-rot: -10deg; }
+
+/* Crossfader at the bottom */
+.mixer-fader {
+  position: absolute;
+  bottom: 6px;
+  left: 8px;
+  right: 8px;
+  height: 14px;
+  background: linear-gradient(180deg, #0a0a0e 0%, #14141a 100%);
+  border-radius: 2px;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+.mixer-fader::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  width: 18px;
+  height: 18px;
+  background: linear-gradient(180deg, #ddd 0%, #777 50%, #aaa 100%);
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+  animation: faderSweep 6s ease-in-out infinite alternate;
+}
+@keyframes faderSweep {
+  0%, 100% { left: 10%; }
+  50%      { left: 70%; }
+}
+
+/* VU meter — bars between the fader and knobs */
+.mixer-vu {
+  position: absolute;
+  top: 26px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 2px;
+  height: 14px;
+  align-items: flex-end;
+}
+.mixer-vu span {
+  display: block;
+  width: 4px;
+  background: linear-gradient(180deg, var(--green), var(--yellow), var(--pink));
+  border-radius: 1px;
+  animation: vuPulse var(--beat-ms) ease-in-out infinite alternate;
+}
+.mixer-vu span:nth-child(1) { height: 30%;  animation-delay: 0s; }
+.mixer-vu span:nth-child(2) { height: 60%;  animation-delay: 0.04s; }
+.mixer-vu span:nth-child(3) { height: 90%;  animation-delay: 0.08s; }
+.mixer-vu span:nth-child(4) { height: 50%;  animation-delay: 0.12s; }
+.mixer-vu span:nth-child(5) { height: 70%;  animation-delay: 0.16s; }
+@keyframes vuPulse {
+  from { transform: scaleY(0.4); transform-origin: bottom; }
+  to   { transform: scaleY(1);   transform-origin: bottom; }
+}
 
 .dj-label {
   position: absolute;

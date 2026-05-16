@@ -324,5 +324,54 @@ export function renamePattern(id: PatternId, name: string): void {
   setPatternBank({ ...seq.bank });
 }
 
+/** Empty a single bank slot — leaves its name, wipes all steps + notes */
+export function clearBankSlot(id: PatternId): void {
+  const empty: Patterns = {
+    kick:    Array(16).fill(false),
+    snare:   Array(16).fill(false),
+    clap:    Array(16).fill(false),
+    hatC:    Array(16).fill(false),
+    hatO:    Array(16).fill(false),
+    cowbell: Array(16).fill(false),
+    bass:    Array(16).fill(null),
+    lead:    Array(16).fill(null),
+  };
+  if (!seq.bank[id]) return;
+  seq.bank[id] = { ...seq.bank[id], patterns: empty };
+  setPatternBank({ ...seq.bank });
+  setPatternsVersion((v) => v + 1);
+}
+
+/** Start fresh — clear every bank pattern + reset song to a single A slot */
+export function newSong(): void {
+  const wasPlaying = seq.isPlaying;
+  if (wasPlaying) seq.stop();
+  // Clear all patterns, keep names from DEFAULT_PATTERN_NAMES
+  PATTERN_IDS.forEach((id) => {
+    seq.bank[id] = {
+      id,
+      name: DEFAULT_PATTERN_NAMES[id],
+      patterns: {
+        kick:    Array(16).fill(false),
+        snare:   Array(16).fill(false),
+        clap:    Array(16).fill(false),
+        hatC:    Array(16).fill(false),
+        hatO:    Array(16).fill(false),
+        cowbell: Array(16).fill(false),
+        bass:    Array(16).fill(null),
+        lead:    Array(16).fill(null),
+      },
+    };
+  });
+  setPatternBank({ ...seq.bank });
+  setSong([{ patternId: 'A', bars: 4 }]);
+  seq.song = song();
+  setEditingPatternId('A');
+  seq.jumpToSlot(0);
+  setPatternsVersion((v) => v + 1);
+  setPlayingPatternId('A');
+  setPlayingSlotIndex(0);
+}
+
 // Initial BPM application
 seq.setBPM(120);

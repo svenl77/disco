@@ -21,6 +21,7 @@ import {
   filter,
   reverb,
   editingPatternId,
+  newSong,
 } from '../state';
 import { PRESETS } from '../audio/presets';
 import { Sequencer } from './Sequencer';
@@ -80,7 +81,17 @@ function StudioPanel() {
         </button>
         <button class="big-btn drop" onClick={() => void triggerDrop()}>🚀 DROP</button>
         <button class="big-btn rand" onClick={randomizeEditing}>🎲 RANDOM</button>
-        <button class="big-btn clear" onClick={clearEditing}>✕ CLEAR</button>
+        <button class="big-btn clear" onClick={clearEditing}>✕ CLEAR PATTERN</button>
+        <button
+          class="big-btn newsong"
+          onClick={() => {
+            if (confirm('Start a fresh song? This wipes ALL patterns + the timeline.')) {
+              newSong();
+            }
+          }}
+        >
+          🗑 NEW SONG
+        </button>
       </div>
 
       <div class="knobs">
