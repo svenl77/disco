@@ -128,6 +128,32 @@ def keep_largest_blob(img: Image.Image, alpha_threshold: int = 32) -> Image.Imag
     return Image.fromarray(arr, "RGBA")
 
 
+def trim_foot_shadow(img: Image.Image, min_row_pct: float = 0.18) -> Image.Image:
+    """Cut off the tail at the bottom of the cutout — the source illustration
+    has a floor shadow under the boy that survives matte removal. The shadow
+    is dark (low RGB) and narrow, while the body has bright/colorful pixels.
+
+    Walk from the bottom up. A row qualifies as "body" only if it has enough
+    BRIGHT (non-shadow) pixels — i.e. pixels that aren't just dark grey. Once
+    we find the body row, kill alpha below it."""
+    arr = np.array(img)
+    alpha = arr[..., 3]
+    brightness = arr[..., :3].mean(axis=2)  # 0..255 mean RGB
+    body_mask = (alpha > 120) & (brightness > 100)  # solid alpha AND brighter than floor shadow
+    row_counts = body_mask.sum(axis=1)
+    if row_counts.max() == 0:
+        return img
+    threshold = max(2, int(row_counts.max() * min_row_pct))
+    h = alpha.shape[0]
+    body_bottom = h - 1
+    while body_bottom > 0 and row_counts[body_bottom] < threshold:
+        body_bottom -= 1
+    # Keep 6px breathing room below the actual body
+    body_bottom = min(h - 1, body_bottom + 6)
+    arr[body_bottom + 1:, ..., 3] = 0
+    return Image.fromarray(arr, "RGBA")
+
+
 def tight_crop(img: Image.Image, alpha_threshold: int = 8) -> Image.Image:
     """Crop transparent borders away — keep a small breathing margin."""
     arr = np.array(img)
@@ -159,6 +185,7 @@ def main() -> int:
         crop = src.crop(bbox)
         cut = remove_bg(session, crop)
         cut = keep_largest_blob(cut)
+        cut = trim_foot_shadow(cut)
         cut = tight_crop(cut)
         out_path = OUT_DIR / f"{boy_id}.png"
         cut.save(out_path, optimize=True)

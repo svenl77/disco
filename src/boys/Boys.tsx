@@ -35,12 +35,9 @@ const ZONE_CONFIG: Record<Zone, {
 
 export function Boys() {
   return (
-    <>
-      <div class="boys-zones">
-        <For each={BOYS}>{(boy) => <Boy boy={boy} />}</For>
-      </div>
-      <div class="click-hint">🍆 KLICK $DISCO = DROP</div>
-    </>
+    <div class="boys-zones">
+      <For each={BOYS}>{(boy) => <Boy boy={boy} />}</For>
+    </div>
   );
 }
 

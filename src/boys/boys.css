@@ -24,9 +24,18 @@
   cursor: pointer;
   filter: drop-shadow(0 0 18px rgba(255, 43, 214, 0.7));
   z-index: 4;
+  /* Subtle pulse on the DJ so the user notices he's the drop trigger */
+  animation:
+    danceC calc(var(--beat-ms) * 4) ease-in-out infinite,
+    djInvite 3s ease-in-out infinite;
 }
 .boy.dj:hover {
   filter: drop-shadow(0 0 30px var(--yellow)) brightness(1.08);
+  animation-play-state: paused;
+}
+@keyframes djInvite {
+  0%, 100% { filter: drop-shadow(0 0 14px rgba(255, 43, 214, 0.5)); }
+  50%      { filter: drop-shadow(0 0 28px rgba(255, 43, 214, 0.9)); }
 }
 
 .boy img {
@@ -136,26 +145,4 @@
   100% { transform: translateX(-50%) translateY(0); }
 }
 
-/* Hint chip */
-.click-hint {
-  position: absolute;
-  bottom: 10px;
-  left: 12px;
-  background: rgba(0, 0, 0, 0.78);
-  border: 1.5px solid var(--yellow);
-  color: var(--yellow);
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 9px;
-  font-weight: 900;
-  letter-spacing: 1.5px;
-  z-index: 12;
-  pointer-events: none;
-  box-shadow: 0 0 10px rgba(255, 242, 0, 0.55);
-  white-space: nowrap;
-  animation: hintPulse 1.4s ease-in-out infinite alternate;
-}
-@keyframes hintPulse {
-  from { opacity: 0.75; box-shadow: 0 0 6px rgba(255, 242, 0, 0.4); }
-  to   { opacity: 1;    box-shadow: 0 0 14px rgba(255, 242, 0, 0.85); }
-}
+/* (hint chip removed — boys are visually inviting; DJ has a subtle pulse) */

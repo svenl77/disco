@@ -1,16 +1,26 @@
 /**
- * Set serialization — pack the full musical + mood state into a tiny
- * URL-safe string, and unpack it on the other side.
+ * Set serialization — pack the full song into a tiny URL-safe string.
  *
- * Format: base64url(JSON({ v, bpm, patterns, mood, preset })) — small enough
- * to fit in a URL hash, deterministic so two players get identical playback.
+ * Format: base64url(JSON({ v, bpm, bank, song, mood })). v=2 introduces the
+ * Pattern Bank + Song timeline; v=1 is migrated on load (whole set becomes
+ * pattern A, song = single 4-bar slot of A).
  */
 import type { Patterns } from '../audio/types';
+import type { PatternBank, Song } from '../audio/song';
 
-const VERSION = 1;
+const VERSION = 2;
 
 export interface DiscoSet {
   v: number;
+  bpm: number;
+  bank: PatternBank;
+  song: Song;
+  mood: string;
+}
+
+// Legacy v1 format — single pattern + preset name
+interface DiscoSetV1 {
+  v: 1;
   bpm: number;
   patterns: Patterns;
   preset: string | null;
@@ -34,21 +44,50 @@ function base64UrlDecode(s: string): Uint8Array {
 
 export function encodeSet(set: Omit<DiscoSet, 'v'>): string {
   const payload: DiscoSet = { v: VERSION, ...set };
-  const json = JSON.stringify(payload);
-  return base64UrlEncode(new TextEncoder().encode(json));
+  return base64UrlEncode(new TextEncoder().encode(JSON.stringify(payload)));
 }
 
 export function decodeSet(encoded: string): DiscoSet | null {
   try {
     const bytes = base64UrlDecode(encoded);
     const json = new TextDecoder().decode(bytes);
-    const parsed = JSON.parse(json) as DiscoSet;
-    if (parsed?.v !== VERSION) return null;
-    if (!parsed.patterns || typeof parsed.bpm !== 'number') return null;
-    return parsed;
+    const parsed = JSON.parse(json);
+    if (parsed?.v === 2) return parsed as DiscoSet;
+    if (parsed?.v === 1) return migrateV1(parsed as DiscoSetV1);
+    return null;
   } catch {
     return null;
   }
+}
+
+function migrateV1(v1: DiscoSetV1): DiscoSet {
+  // Whole pattern becomes slot A, song = one block of A × 4 bars
+  const empty = {
+    kick:    Array(16).fill(false),
+    snare:   Array(16).fill(false),
+    clap:    Array(16).fill(false),
+    hatC:    Array(16).fill(false),
+    hatO:    Array(16).fill(false),
+    cowbell: Array(16).fill(false),
+    bass:    Array(16).fill(null) as (string | null)[],
+    lead:    Array(16).fill(null) as (string | null)[],
+  };
+  return {
+    v: 2,
+    bpm: v1.bpm,
+    bank: {
+      A: { id: 'A', name: v1.preset ?? 'A', patterns: v1.patterns },
+      B: { id: 'B', name: 'B', patterns: { ...empty } },
+      C: { id: 'C', name: 'C', patterns: { ...empty } },
+      D: { id: 'D', name: 'D', patterns: { ...empty } },
+      E: { id: 'E', name: 'E', patterns: { ...empty } },
+      F: { id: 'F', name: 'F', patterns: { ...empty } },
+      G: { id: 'G', name: 'G', patterns: { ...empty } },
+      H: { id: 'H', name: 'H', patterns: { ...empty } },
+    },
+    song: [{ patternId: 'A', bars: 4 }],
+    mood: v1.mood,
+  };
 }
 
 export function shareURL(set: Omit<DiscoSet, 'v'>): string {

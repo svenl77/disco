@@ -83,14 +83,19 @@ export function Stage() {
       {/* Perspective dance floor grid */}
       <div class="floor-3d" />
 
-      {/* DJ lasers — sweep across the dance floor from the booth */}
+      {/* Two laser stations — one on each speaker.
+          Each fires 3 beams across the room creating a cross pattern. */}
       <div class="dj-lasers">
-        <div class="laser laser-pink" />
-        <div class="laser laser-cyan" />
-        <div class="laser laser-yellow" />
-        <div class="laser laser-green" />
-        <div class="laser laser-orange" />
-        <div class="laser laser-eggplant" />
+        <div class="laser-station left">
+          <div class="laser laser-a" />
+          <div class="laser laser-b" />
+          <div class="laser laser-c" />
+        </div>
+        <div class="laser-station right">
+          <div class="laser laser-a" />
+          <div class="laser laser-b" />
+          <div class="laser laser-c" />
+        </div>
       </div>
 
       {/* Reflective spots — white light bounces off the disco ball outward */}

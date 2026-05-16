@@ -1,31 +1,33 @@
 /**
- * Share / save controls — viral surface for sharing a set.
+ * Share / save controls — viral surface for sharing a full song.
  *
- *   COPY LINK → copy the share URL to clipboard
- *   SAVE JSON → download the set as a .json file
- *   PASTE LOAD → paste a share URL or JSON to load it
+ *   SHARE → copy share URL to clipboard (whole bank + song packed in #s=...)
+ *   SAVE  → download the song as a .json
+ *   LOAD  → paste a share URL or JSON to import a song
  */
 import { createSignal } from 'solid-js';
 import {
   bpm,
   setBpmValue,
-  activePreset,
-  setActivePreset,
   mood,
   setMood,
   seq,
+  song,
+  patternBank,
+  setSong,
+  setPatternBank,
   setPatternsVersion,
 } from '../state';
-import { decodeSet, downloadJSON, shareURL } from './serialize';
+import { decodeSet, downloadJSON, shareURL, type DiscoSet } from './serialize';
 import './share.css';
 
 export function ShareBar() {
   const [flash, setFlash] = createSignal<string | null>(null);
 
-  const buildSet = () => ({
+  const buildSet = (): Omit<DiscoSet, 'v'> => ({
     bpm: bpm(),
-    patterns: seq.patterns,
-    preset: activePreset(),
+    bank: patternBank(),
+    song: song(),
     mood: mood(),
   });
 
@@ -35,7 +37,6 @@ export function ShareBar() {
       await navigator.clipboard.writeText(url);
       showFlash('LINK COPIED 🔗');
     } catch {
-      // Fallback for non-https
       window.prompt('Copy this share URL', url);
     }
   }
@@ -55,11 +56,11 @@ export function ShareBar() {
     if (urlMatch) encoded = urlMatch[1];
     else if (/^[A-Za-z0-9_-]+$/.test(candidate.trim())) encoded = candidate.trim();
 
-    let set = encoded ? decodeSet(encoded) : null;
+    let set: DiscoSet | null = encoded ? decodeSet(encoded) : null;
     if (!set) {
       try {
         const parsed = JSON.parse(candidate);
-        if (parsed?.v === 1) set = parsed;
+        if (parsed?.v === 1 || parsed?.v === 2) set = parsed;
       } catch { /* not JSON either */ }
     }
     if (!set) {
@@ -86,21 +87,16 @@ export function ShareBar() {
   );
 }
 
-/** Apply a decoded set to the global state — exported for URL-bootstrap too. */
-export function applySet(set: ReturnType<typeof decodeSet> & {}): void {
+/** Apply a decoded set to the global state */
+export function applySet(set: DiscoSet | null): void {
   if (!set) return;
   setBpmValue(set.bpm);
-  seq.patterns = {
-    kick: set.patterns.kick.slice(),
-    snare: set.patterns.snare.slice(),
-    clap: set.patterns.clap.slice(),
-    hatC: set.patterns.hatC.slice(),
-    hatO: set.patterns.hatO.slice(),
-    cowbell: set.patterns.cowbell.slice(),
-    bass: set.patterns.bass.slice(),
-    lead: set.patterns.lead.slice(),
-  };
-  setActivePreset(set.preset);
+  // Replace bank + song
+  setPatternBank(set.bank);
+  seq.bank = set.bank;
+  setSong(set.song);
+  seq.song = set.song;
+  seq.loadSlot(0);
   setPatternsVersion((v) => v + 1);
   if (set.mood === 'acid') setMood('acid');
   else setMood('groove');

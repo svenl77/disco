@@ -1,11 +1,12 @@
 /**
  * 16-step grid sequencer — 8 tracks (drums + bass + lead).
  *
- * Click a cell to toggle (or cycle bass/lead notes); right-click to clear.
- * The currently playing step is highlighted via the `currentStep()` signal.
+ * Edits the CURRENTLY-EDITING pattern (from the bank), independent of which
+ * pattern is playing. The playhead highlight still shows the live step
+ * position so you see what's happening even while editing another pattern.
  */
 import { For } from 'solid-js';
-import { currentStep, patternsVersion, seq, toggleCell, clearCell } from '../state';
+import { currentStep, patternsVersion, seq, editingPatternId, toggleCell, clearCell, playingPatternId } from '../state';
 import type { TrackKey } from '../audio/types';
 
 interface TrackDef {
@@ -34,11 +35,14 @@ export function Sequencer() {
 }
 
 function Track(props: { track: TrackDef }) {
-  // Touch patternsVersion so this re-renders when patterns mutate
+  // Read from the editing pattern (the bank slot the user selected)
   const cellState = (i: number) => {
     patternsVersion();
-    return seq.patterns[props.track.key][i];
+    const id = editingPatternId();
+    return seq.bank[id]?.patterns[props.track.key][i];
   };
+  // Show playhead highlight only if we're editing the pattern that's currently sounding
+  const playheadActive = () => editingPatternId() === playingPatternId();
 
   return (
     <div class="seq-row" data-track={props.track.key}>
@@ -51,7 +55,7 @@ function Track(props: { track: TrackDef }) {
               'beat-mark': i() % 4 === 0,
               'note-cell': !!props.track.note,
               on: !!cellState(i()),
-              playing: currentStep() === i(),
+              playing: playheadActive() && currentStep() === i(),
             }}
             onClick={() => toggleCell(props.track.key, i())}
             onContextMenu={(e) => {

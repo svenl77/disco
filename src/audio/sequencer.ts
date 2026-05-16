@@ -1,27 +1,33 @@
 import type { AudioEngine } from './engine';
-import type { Patterns, StepCallback, Preset } from './types';
+import type { Patterns, StepCallback } from './types';
+import type { PatternBank, PatternId, Song } from './song';
+import { emptyPatterns } from './song';
 
 const STEPS = 16;
 
-function emptyPatterns(): Patterns {
-  return {
-    kick: Array(STEPS).fill(false),
-    snare: Array(STEPS).fill(false),
-    clap: Array(STEPS).fill(false),
-    hatC: Array(STEPS).fill(false),
-    hatO: Array(STEPS).fill(false),
-    cowbell: Array(STEPS).fill(false),
-    bass: Array(STEPS).fill(null),
-    lead: Array(STEPS).fill(null),
-  };
-}
+/** Callback the UI subscribes to so it can render the playhead. */
+export type SongCallback = (info: { slotIndex: number; barInSlot: number; step: number; patternId: PatternId; time: number }) => void;
 
 export class Sequencer {
   bpm = 120;
   isPlaying = false;
   currentStep = 0;
+  /** Bar number within the current song slot */
+  barInSlot = 0;
+  /** Which song slot is currently playing */
+  songIndex = 0;
+
+  /** Live pattern data — fed by the song + bank */
   patterns: Patterns = emptyPatterns();
+  /** The pattern bank — A..H */
+  bank: PatternBank = {} as PatternBank;
+  /** The song = ordered list of slots */
+  song: Song = [];
+  /** Which pattern ID is currently sounding */
+  currentPatternId: PatternId = 'A';
+
   onStep: StepCallback | null = null;
+  onSong: SongCallback | null = null;
 
   private audio: AudioEngine;
   private nextNoteTime = 0;
@@ -42,6 +48,9 @@ export class Sequencer {
     if (this.isPlaying || !this.audio.ctx) return;
     this.isPlaying = true;
     this.currentStep = 0;
+    this.barInSlot = 0;
+    this.songIndex = 0;
+    this.loadSlot(0);
     this.nextNoteTime = this.audio.ctx.currentTime + 0.05;
     this.tick();
   }
@@ -59,46 +68,53 @@ export class Sequencer {
     else this.start();
   }
 
-  load(preset: Preset): void {
-    const p = this.patterns;
-    p.kick = preset.kick.slice();
-    p.snare = preset.snare.slice();
-    p.clap = preset.clap.slice();
-    p.hatC = preset.hatC.slice();
-    p.hatO = preset.hatO.slice();
-    p.cowbell = preset.cowbell.slice();
-    p.bass = preset.bass.slice();
-    p.lead = preset.lead.slice();
+  /** Jump to a specific song slot (for click-to-play or transport scrub) */
+  jumpToSlot(index: number): void {
+    if (index < 0 || index >= this.song.length) return;
+    this.songIndex = index;
+    this.barInSlot = 0;
+    this.currentStep = 0;
+    this.loadSlot(index);
   }
 
-  clear(): void {
-    this.patterns = emptyPatterns();
+  /** Pull a pattern from the bank into the live `patterns` slot. */
+  loadSlot(index: number): void {
+    const slot = this.song[index];
+    if (!slot) return;
+    const entry = this.bank[slot.patternId];
+    if (!entry) return;
+    this.patterns = entry.patterns; // live reference — edits show immediately
+    this.currentPatternId = slot.patternId;
   }
 
-  randomize(): void {
-    const p = this.patterns;
-    p.kick = [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0].map(Boolean);
-    p.snare = [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0].map(Boolean);
-    p.clap = [0, 0, 0, 0, Math.random() > 0.5 ? 1 : 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0].map(Boolean);
-    p.hatC = Array.from({ length: 16 }, (_, i) => Math.random() < (i % 2 ? 0.55 : 0.15));
-    p.hatO = Array.from({ length: 16 }, () => Math.random() < 0.1);
-    p.cowbell = Array.from({ length: 16 }, () => Math.random() < 0.12);
-    const bassPool = ['C2', 'D#2', 'F2', 'G2', 'A#2', 'C3'];
-    p.bass = Array.from({ length: 16 }, (_, i) =>
-      i % 4 === 0 || Math.random() < 0.35 ? bassPool[Math.floor(Math.random() * bassPool.length)] : null,
-    );
-    const leadPool = ['C5', 'D#5', 'F5', 'G5', 'A#5'];
-    p.lead = Array.from({ length: 16 }, () =>
-      Math.random() < 0.18 ? leadPool[Math.floor(Math.random() * leadPool.length)] : null,
-    );
+  /** Replace the editable patterns for a given pattern ID */
+  writePattern(id: PatternId, patterns: Patterns): void {
+    if (this.bank[id]) this.bank[id].patterns = patterns;
+    if (id === this.currentPatternId) this.patterns = patterns;
+  }
+
+  clearCurrent(): void {
+    const empty = emptyPatterns();
+    this.writePattern(this.currentPatternId, empty);
   }
 
   private tick(): void {
     if (!this.isPlaying || !this.audio.ctx) return;
     while (this.nextNoteTime < this.audio.ctx.currentTime + this.scheduleAheadTime) {
       this.scheduleStep(this.currentStep, this.nextNoteTime);
-      this.nextNoteTime += this.stepDur();
+      const stepDur = this.stepDur();
+      this.nextNoteTime += stepDur;
       this.currentStep = (this.currentStep + 1) % STEPS;
+      // Bar boundary: when wrap to 0
+      if (this.currentStep === 0) {
+        this.barInSlot += 1;
+        const slot = this.song[this.songIndex];
+        if (slot && this.barInSlot >= slot.bars) {
+          this.barInSlot = 0;
+          this.songIndex = (this.songIndex + 1) % this.song.length;
+          this.loadSlot(this.songIndex);
+        }
+      }
     }
     this.timerId = setTimeout(() => this.tick(), this.lookahead);
   }
@@ -114,6 +130,15 @@ export class Sequencer {
     if (p.bass[step]) this.audio.bass(time, this.audio.freqOf(p.bass[step]!), this.stepDur() * 0.95);
     if (p.lead[step]) this.audio.lead(time, this.audio.freqOf(p.lead[step]!), this.stepDur() * 1.5);
     if (this.onStep) this.onStep(step, time);
+    if (this.onSong) {
+      this.onSong({
+        slotIndex: this.songIndex,
+        barInSlot: this.barInSlot,
+        step,
+        patternId: this.currentPatternId,
+        time,
+      });
+    }
   }
 
   private stepDur(): number {
