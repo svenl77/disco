@@ -22,6 +22,7 @@ import {
   type PatternId,
   type Song,
 } from './audio/song';
+import { CHORD_NAMES } from './audio/chords';
 
 export const audio = new AudioEngine();
 export const seq = new Sequencer(audio);
@@ -103,6 +104,7 @@ function buildInitialBank(): PatternBank {
             cowbell: Array(16).fill(false),
             bass:    Array(16).fill(null),
             lead:    Array(16).fill(null),
+            chord:   Array(16).fill(null),
           },
     };
   });
@@ -254,6 +256,13 @@ export function toggleCell(track: keyof Patterns, step: number): void {
       const i = notes.indexOf(cur);
       pats[track][step] = i === notes.length - 1 ? null : notes[i + 1];
     }
+  } else if (track === 'chord') {
+    const cur = pats.chord[step];
+    if (!cur) pats.chord[step] = CHORD_NAMES[0];
+    else {
+      const i = CHORD_NAMES.indexOf(cur);
+      pats.chord[step] = i === CHORD_NAMES.length - 1 ? null : CHORD_NAMES[i + 1];
+    }
   } else {
     pats[track][step] = !pats[track][step];
   }
@@ -263,7 +272,7 @@ export function toggleCell(track: keyof Patterns, step: number): void {
 export function clearCell(track: keyof Patterns, step: number): void {
   const id = editingPatternId();
   const pats = seq.bank[id].patterns;
-  if (track === 'bass' || track === 'lead') {
+  if (track === 'bass' || track === 'lead' || track === 'chord') {
     pats[track][step] = null;
   } else {
     pats[track][step] = false;
@@ -319,6 +328,7 @@ export function clearEditing(): void {
   p.cowbell = Array(16).fill(false);
   p.bass = Array(16).fill(null);
   p.lead = Array(16).fill(null);
+  p.chord = Array(16).fill(null);
   setPatternsVersion((v) => v + 1);
 }
 
@@ -372,6 +382,7 @@ export function clearBankSlot(id: PatternId): void {
     cowbell: Array(16).fill(false),
     bass:    Array(16).fill(null),
     lead:    Array(16).fill(null),
+    chord:   Array(16).fill(null),
   };
   if (!seq.bank[id]) return;
   seq.bank[id] = { ...seq.bank[id], patterns: empty };
@@ -396,7 +407,8 @@ export function createNewRecord(): void {
       !p.hatO.some(Boolean) &&
       !p.cowbell.some(Boolean) &&
       !p.bass.some((x) => x !== null) &&
-      !p.lead.some((x) => x !== null)
+      !p.lead.some((x) => x !== null) &&
+      !(p.chord ?? []).some((x) => x !== null)
     );
   }
 
@@ -444,6 +456,7 @@ export function newSong(): void {
         cowbell: Array(16).fill(false),
         bass:    Array(16).fill(null),
         lead:    Array(16).fill(null),
+        chord:   Array(16).fill(null),
       },
     };
   });

@@ -791,6 +791,7 @@
 .seq-row[data-track='cowbell'] { --row-color: #b346c8; --row-color-2: #ff2bd6; }
 .seq-row[data-track='bass']    { --row-color: #39ff14; --row-color-2: #00f0ff; }
 .seq-row[data-track='lead']    { --row-color: #ff2bd6; --row-color-2: #00f0ff; }
+.seq-row[data-track='chord']   { --row-color: #b346c8; --row-color-2: #ffd24a; }
 
 .seq-row[data-track='kick']    .seq-label { color: #ff2bd6; }
 .seq-row[data-track='snare']   .seq-label { color: #ff7a00; }
@@ -800,6 +801,13 @@
 .seq-row[data-track='cowbell'] .seq-label { color: #b346c8; }
 .seq-row[data-track='bass']    .seq-label { color: #39ff14; }
 .seq-row[data-track='lead']    .seq-label { color: #ff2bd6; }
+.seq-row[data-track='chord']   .seq-label { color: #b346c8; }
+
+/* Chord cells need tiny font to fit names like 'A#maj7' / 'Abmaj9' */
+.seq-row[data-track='chord'] .seq-cell.note-cell .note-label {
+  font-size: 7px;
+  letter-spacing: -0.5px;
+}
 
 /* Chord pads */
 .chord-grid {

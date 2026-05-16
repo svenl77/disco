@@ -27,7 +27,6 @@ import {
 } from '../state';
 import { PRESETS } from '../audio/presets';
 import { Sequencer } from './Sequencer';
-import { ChordPads } from './ChordPads';
 import { TimelineView } from './TimelineView';
 import { PatternBank } from './PatternBank';
 import './music.css';
@@ -117,19 +116,13 @@ function StudioPanel() {
         </For>
       </div>
 
-      <div class="studio-grid">
-        <div class="studio-section">
-          <div class="studio-title">PATTERN BANK · click to edit, double-click to rename</div>
-          <PatternBank />
-          <div class="studio-title" style={{ 'margin-top': '14px' }}>
-            EDITING {editingPatternId()} · DRUMS · BASS · LEAD
-          </div>
-          <Sequencer />
+      <div class="studio-section">
+        <div class="studio-title">PATTERN BANK · click to edit, double-click to rename</div>
+        <PatternBank />
+        <div class="studio-title" style={{ 'margin-top': '14px' }}>
+          EDITING {editingPatternId()} · DRUMS · BASS · LEAD · CHORDS
         </div>
-        <div class="studio-section">
-          <div class="studio-title">CHORDS · Q W E R T Y U I</div>
-          <ChordPads />
-        </div>
+        <Sequencer />
       </div>
     </div>
   );

@@ -54,6 +54,7 @@ export function emptyPatterns(): Patterns {
     cowbell: Array(16).fill(false),
     bass:    Array(16).fill(null),
     lead:    Array(16).fill(null),
+    chord:   Array(16).fill(null),
   };
 }
 
@@ -67,6 +68,7 @@ export function clonePatterns(p: Patterns): Patterns {
     cowbell: p.cowbell.slice(),
     bass:    p.bass.slice(),
     lead:    p.lead.slice(),
+    chord:   (p.chord ?? Array(16).fill(null)).slice(),
   };
 }
 

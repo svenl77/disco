@@ -2,6 +2,7 @@ import type { AudioEngine } from './engine';
 import type { Patterns, StepCallback } from './types';
 import type { PatternBank, PatternId, Song } from './song';
 import { emptyPatterns } from './song';
+import { chordByName } from './chords';
 
 const STEPS = 16;
 
@@ -159,6 +160,14 @@ export class Sequencer {
     if (p.cowbell[step]) this.audio.cowbell(time);
     if (p.bass[step]) this.audio.bass(time, this.audio.freqOf(p.bass[step]!), this.stepDur() * 0.95);
     if (p.lead[step]) this.audio.lead(time, this.audio.freqOf(p.lead[step]!), this.stepDur() * 1.5);
+    if (p.chord && p.chord[step]) {
+      const ch = chordByName(p.chord[step]!);
+      if (ch) {
+        const freqs = ch.notes.map((n) => this.audio.freqOf(n));
+        // Chord rings for ~4 steps (one beat at 16 steps/bar) so it feels lush
+        this.audio.chord(time, freqs, this.stepDur() * 4, 0.4);
+      }
+    }
     if (this.onStep) this.onStep(step, time);
     if (this.onSong) {
       this.onSong({

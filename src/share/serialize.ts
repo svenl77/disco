@@ -71,12 +71,18 @@ function migrateV1(v1: DiscoSetV1): DiscoSet {
     cowbell: Array(16).fill(false),
     bass:    Array(16).fill(null) as (string | null)[],
     lead:    Array(16).fill(null) as (string | null)[],
+    chord:   Array(16).fill(null) as (string | null)[],
+  };
+  // Also tolerate v1 patterns that pre-date the chord track
+  const v1Patterns: Patterns = {
+    ...v1.patterns,
+    chord: (v1.patterns as Patterns).chord ?? Array(16).fill(null),
   };
   return {
     v: 2,
     bpm: v1.bpm,
     bank: {
-      A: { id: 'A', name: v1.preset ?? 'A', patterns: v1.patterns },
+      A: { id: 'A', name: v1.preset ?? 'A', patterns: v1Patterns },
       B: { id: 'B', name: 'B', patterns: { ...empty } },
       C: { id: 'C', name: 'C', patterns: { ...empty } },
       D: { id: 'D', name: 'D', patterns: { ...empty } },

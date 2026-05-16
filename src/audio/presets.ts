@@ -1,6 +1,7 @@
 import type { Preset } from './types';
 
 const b = (arr: number[]): boolean[] => arr.map(Boolean);
+const noChords = (): (string | null)[] => Array(16).fill(null);
 
 export const PRESETS: Record<string, Preset> = {
   'DISCO INFERNO': {
@@ -12,6 +13,7 @@ export const PRESETS: Record<string, Preset> = {
     cowbell: b([0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0]),
     bass: ['C2', null, null, 'C2', null, 'C2', null, null, 'G2', null, null, 'G2', null, 'F2', null, 'E2'],
     lead: [null, null, null, null, null, null, null, null, null, null, 'C5', null, null, null, 'G4', null],
+    chord: ['Cm9', null, null, null, 'Fm7', null, null, null, 'Cm9', null, null, null, 'Gm7', null, null, null],
   },
   'STAYIN ALIVE': {
     kick: b([1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0]),
@@ -22,6 +24,7 @@ export const PRESETS: Record<string, Preset> = {
     cowbell: b([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
     bass: ['A2', null, 'A2', null, null, 'A2', null, null, 'G2', null, 'G2', null, null, 'F2', null, 'E2'],
     lead: [null, null, 'A4', null, 'C5', null, null, null, null, null, 'G4', null, 'A4', null, null, null],
+    chord: ['Fm7', null, null, null, 'Cm9', null, null, null, 'Fm7', null, null, null, 'A#maj7', null, null, null],
   },
   'FUNKY TOWN': {
     kick: b([1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0]),
@@ -32,6 +35,7 @@ export const PRESETS: Record<string, Preset> = {
     cowbell: b([0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1]),
     bass: ['C2', 'C2', null, 'C2', 'C2', null, 'C2', 'C2', null, 'D2', null, 'E2', null, 'D2', 'C2', null],
     lead: Array(16).fill(null),
+    chord: noChords(),
   },
   'DAFT DISCO': {
     kick: b([1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0]),
@@ -42,6 +46,7 @@ export const PRESETS: Record<string, Preset> = {
     cowbell: b([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
     bass: ['C2', null, 'C2', 'C2', null, 'C2', null, 'C2', 'G2', null, 'G2', 'G2', null, 'A2', 'G2', 'F2'],
     lead: ['C5', null, null, 'E5', null, 'G4', null, null, 'D5', null, null, 'F5', null, 'A4', null, null],
+    chord: ['Cm9', null, null, null, 'Cm9', null, null, null, 'Fm7', null, null, null, 'Gm7', null, null, null],
   },
   'ACID DISCO': {
     kick: b([1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0]),
@@ -52,6 +57,7 @@ export const PRESETS: Record<string, Preset> = {
     cowbell: b([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
     bass: ['C2', 'C2', null, 'D2', 'C2', null, 'D#2', 'C2', 'C2', null, 'G2', 'C2', 'A#2', 'C2', null, 'D2'],
     lead: Array(16).fill(null),
+    chord: noChords(),
   },
   'BOOGIE NIGHTS': {
     kick: b([1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1]),
@@ -62,5 +68,6 @@ export const PRESETS: Record<string, Preset> = {
     cowbell: b([0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0]),
     bass: ['C2', null, 'E2', 'G2', null, 'G2', null, 'E2', 'F2', null, 'A2', 'C3', null, 'A2', 'G2', 'E2'],
     lead: [null, null, 'C5', 'E5', null, 'G5', null, 'E5', null, null, 'F5', 'A5', null, 'G5', 'E5', 'C5'],
+    chord: ['Cm9', null, null, null, 'Fm7', null, null, null, 'Gm7', null, null, null, 'Cm9', null, null, null],
   },
 };

@@ -24,6 +24,7 @@ const TRACKS: TrackDef[] = [
   { key: 'cowbell', label: 'COW 🔔' },
   { key: 'bass',    label: 'BAS 🎸', note: true },
   { key: 'lead',    label: 'LED 🎹', note: true },
+  { key: 'chord',   label: 'CHD 🎶', note: true },
 ];
 
 export function Sequencer() {
