@@ -62,13 +62,26 @@ export function Stage() {
 
       {/* DJ stage at back centre — raised platform where Eggplant stands */}
       <div class="dj-stage" />
-      {/* DJ pult — IN FRONT of the DJ (Eggplant), with detailed turntables */}
+      {/* DJ pult — front view of the DJ table.
+          Layered from back to front:
+            .dj-pult-top      — narrow surface seen as a thin band
+            two turntables ON that surface (flat ovals, only their top edge)
+            the mixer between them
+            .dj-pult-front    — the big front face of the table with $DISCO logo */}
       <div class="dj-pult">
         <div class="dj-label">$DISCO</div>
-        <div class="deck deck-l" />
-        <div class="tonearm tonearm-l" />
-        <div class="deck deck-r" />
-        <div class="tonearm tonearm-r" />
+
+        {/* Left turntable — housing box + thin vinyl silhouette + tonearm */}
+        <div class="deck deck-l">
+          <div class="deck-vinyl" />
+          <div class="tonearm tonearm-l">
+            <div class="tonearm-arm" />
+            <div class="tonearm-pivot" />
+            <div class="tonearm-tip" />
+          </div>
+        </div>
+
+        {/* Mixer in the middle */}
         <div class="mixer">
           <div class="mixer-knobs">
             <span class="mixer-knob" />
@@ -81,8 +94,22 @@ export function Stage() {
           <div class="mixer-vu">
             <span /><span /><span /><span /><span />
           </div>
-          <div class="mixer-fader" />
         </div>
+
+        {/* Right turntable */}
+        <div class="deck deck-r">
+          <div class="deck-vinyl" />
+          <div class="tonearm tonearm-r">
+            <div class="tonearm-arm" />
+            <div class="tonearm-pivot" />
+            <div class="tonearm-tip" />
+          </div>
+        </div>
+
+        {/* Table top band — between equipment and front face */}
+        <div class="dj-pult-top" />
+        {/* The big front-facing panel with $DISCO logo — rendered LAST so it's on top */}
+        <div class="dj-pult-front" />
       </div>
       <div class="speaker stack-l" />
       <div class="speaker stack-r" />

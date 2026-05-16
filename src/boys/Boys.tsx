@@ -21,17 +21,17 @@ const ZONE_CONFIG: Record<Zone, {
   bottom: string;
   layer: number; // higher = in front
 }> = {
-  // Eggplant is the DJ — feet on top of the dj-stage platform.
-  // The dj-pult sits IN FRONT of him (higher z-index) so he visually stands
-  // behind the decks rather than on top of them.
-  'dj':            { size: 'm',  left: '50%', bottom: '42%', layer: 4 },
-  // Two dancers — closer to camera, bigger
-  'dancefloor-l':  { size: 'l',  left: '24%', bottom: '6%',  layer: 7 },
-  'dancefloor-r':  { size: 'l',  left: '44%', bottom: '6%',  layer: 7 },
-  // Burns chills mid-right near the bar, mid-depth, mid-size
-  'bar-side':      { size: 'm',  left: '70%', bottom: '8%',  layer: 6 },
-  // Landwulf at the bar, far right
-  'bar':           { size: 'm',  left: '88%', bottom: '12%', layer: 6 },
+  // Eggplant is the DJ — stands BEHIND the pult. His bottom % is chosen so
+  // that the pult's front-face hides his legs and the equipment band sits
+  // at his hip level. The pult is z-index 5; Eggplant is layer 4.
+  'dj':            { size: 'm',  left: '50%', bottom: '30%', layer: 4 },
+  // Two front dancers, OUTSIDE the pult area horizontally (pult spans ~36-64%)
+  'dancefloor-l':  { size: 'm',  left: '18%', bottom: '6%',  layer: 7 },
+  'dancefloor-r':  { size: 'm',  left: '32%', bottom: '6%',  layer: 7 },
+  // Burns chills mid-right
+  'bar-side':      { size: 'm',  left: '68%', bottom: '7%',  layer: 6 },
+  // Landwulf at the bar (far right)
+  'bar':           { size: 's',  left: '88%', bottom: '12%', layer: 6 },
 };
 
 export function Boys() {

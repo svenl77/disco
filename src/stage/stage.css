@@ -109,14 +109,14 @@
 }
 @keyframes starsTwinkle { from { opacity: 0.3; } to { opacity: 0.9; } }
 
-/* === DJ STAGE === a raised platform at the back where the DJ stands === */
+/* === DJ STAGE === a subtle raised lip behind the DJ pult === */
 .dj-stage {
   position: absolute;
-  bottom: 32%;
+  bottom: 28%;
   left: 50%;
   transform: translateX(-50%);
-  width: 320px;
-  height: 70px;
+  width: 340px;
+  height: 30px;
   background:
     linear-gradient(180deg,
       #2a0050 0%,
@@ -126,10 +126,10 @@
   border-left: 1px solid rgba(255, 43, 214, 0.5);
   border-right: 1px solid rgba(255, 43, 214, 0.5);
   box-shadow:
-    0 0 28px rgba(0, 240, 255, 0.4),
-    inset 0 0 30px rgba(0, 0, 0, 0.6);
+    0 0 24px rgba(0, 240, 255, 0.35),
+    inset 0 0 20px rgba(0, 0, 0, 0.6);
   z-index: 1;
-  border-radius: 6px 6px 0 0;
+  border-radius: 4px 4px 0 0;
 }
 /* Stage edge LED strip */
 .dj-stage::before {
@@ -146,217 +146,268 @@
 }
 @keyframes stageLedShift { to { background-position: 200% 0; } }
 
-/* === DJ PULT — IN FRONT of the DJ, covering his lower body so he looks
-       like he's standing BEHIND the decks. z-index higher than the Boy. === */
+/* === DJ PULT — pure FRONT view from the audience.
+   The audience sees only the table FRONT face + the side profile of the
+   equipment sitting on top. Turntables = thin record edge (silhouette) on
+   a small housing box. Mixer = small console between them. No top-down
+   circles — everything is profile. */
 .dj-pult {
   position: absolute;
-  bottom: 30%;          /* sits right at the stage edge, at Eggplant's waist */
+  bottom: 18%;
   left: 50%;
   transform: translateX(-50%);
   width: 360px;
-  height: 92px;
-  background:
-    linear-gradient(180deg,
-      #2a2a35 0%,
-      #1a1a22 30%,
-      #0c0c12 100%);
-  border: 1.5px solid rgba(255, 43, 214, 0.5);
-  border-radius: 8px;
-  box-shadow:
-    0 6px 22px rgba(0, 0, 0, 0.7),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    0 0 18px rgba(0, 240, 255, 0.2);
-  z-index: 5;  /* IN FRONT of the boys (.boy.dj is z-index 4) */
-}
-/* Top LED strip on the pult */
-.dj-pult::before {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: 8px;
-  right: 8px;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--cyan), var(--pink), var(--cyan), transparent);
-  box-shadow: 0 0 8px var(--cyan);
-}
-/* Front-facing $DISCO label on the pult */
-.dj-pult::after {
-  content: '$DISCO';
-  position: absolute;
-  bottom: 4px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-family: inherit;
-  font-size: 9px;
-  font-weight: 900;
-  letter-spacing: 5px;
-  color: var(--pink);
-  text-shadow: 0 0 6px var(--pink);
+  height: 165px;
+  z-index: 5;  /* IN FRONT of the DJ */
+  pointer-events: none;
 }
 
-/* === TURNTABLES — big detailed vinyl decks === */
+/* The thin top edge of the table — a darker band that suggests the table top */
+.dj-pult-top {
+  position: absolute;
+  top: 30px;     /* equipment area sits above this (top: 0-30) */
+  left: 0;
+  right: 0;
+  height: 8px;
+  background: linear-gradient(180deg,
+    #3a3a48 0%,
+    #1a1a22 60%,
+    #0c0c12 100%);
+  border-top: 1.5px solid rgba(0, 240, 255, 0.5);
+  border-left: 1.5px solid rgba(255, 43, 214, 0.45);
+  border-right: 1.5px solid rgba(255, 43, 214, 0.45);
+}
+
+/* The big front face of the DJ table — large dark panel facing the audience */
+.dj-pult-front {
+  position: absolute;
+  top: 38px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(ellipse 60% 80% at 50% 30%, rgba(255, 43, 214, 0.10), transparent 70%),
+    linear-gradient(180deg, #1a1a22 0%, #0c0c12 100%);
+  border: 1.5px solid rgba(255, 43, 214, 0.5);
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.7);
+}
+/* $DISCO logo on the front of the pult — facing the audience */
+.dj-pult-front::after {
+  content: '$DISCO';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: inherit;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 8px;
+  color: var(--pink);
+  text-shadow:
+    0 0 8px var(--pink),
+    0 0 22px rgba(255, 43, 214, 0.65);
+  animation: discoLogoPulse 2s ease-in-out infinite alternate;
+}
+@keyframes discoLogoPulse {
+  from { text-shadow: 0 0 6px var(--pink); }
+  to   { text-shadow: 0 0 14px var(--pink), 0 0 32px rgba(255, 43, 214, 0.8); }
+}
+
+/* === TURNTABLES — pure side profile ===
+   Each turntable is just a low housing box + a thin vinyl edge silhouette
+   on top. From front view you cannot see top-down circles, so we show a
+   horizontal line that represents the record's edge. A subtle spin
+   indicator (a brighter slot in the line) sweeps across to suggest motion. */
 .deck {
   position: absolute;
-  top: 8px;
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background:
-    /* outer ring (platter rim) */
-    radial-gradient(circle at 50% 50%,
-      transparent 0%,
-      transparent 46%,
-      #2a2a35 47%,
-      #1a1a22 50%,
-      #444 52%,
-      #1a1a22 54%,
-      transparent 55%),
-    /* the vinyl itself — grooves */
-    repeating-radial-gradient(circle at 50% 50%,
-      #0a0a0e 0px,
-      #0a0a0e 1px,
-      #16161c 1px,
-      #16161c 2px),
-    /* base */
-    radial-gradient(circle at 50% 50%, #14141a, #08080d);
-  box-shadow:
-    inset 0 0 8px rgba(255, 255, 255, 0.08),
-    inset 0 0 18px rgba(0, 0, 0, 0.8),
-    0 2px 6px rgba(0, 0, 0, 0.7);
-  animation: deckSpin 1.4s linear infinite;
+  top: 6px;        /* equipment sits ABOVE the table top */
+  width: 88px;
+  height: 26px;
+  pointer-events: none;
 }
-/* The center label of the record */
+.deck-l { left: 14px; }
+.deck-r { right: 14px; }
+
+/* Housing — the box that the platter sits in */
 .deck::before {
   content: '';
   position: absolute;
-  top: 50%; left: 50%;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at 50% 50%,
-      var(--pink) 0%,
-      var(--pink) 35%,
-      #6b0050 36%,
-      #6b0050 60%,
-      var(--pink) 61%,
-      var(--pink) 70%,
-      #6b0050 71%,
-      #6b0050 100%);
+  bottom: 0;
+  left: 2px;
+  right: 2px;
+  height: 18px;
+  background: linear-gradient(180deg, #353540 0%, #1a1a22 50%, #0c0c12 100%);
+  border-radius: 3px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  border-left: 1px solid rgba(255, 255, 255, 0.05);
+  border-right: 1px solid rgba(0, 0, 0, 0.4);
   box-shadow:
-    0 0 6px var(--pink),
-    inset 0 0 4px rgba(0, 0, 0, 0.5);
-  transform: translate(-50%, -50%);
+    0 2px 4px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
-/* The center hole + spindle */
+
+/* Tiny power light on the housing */
 .deck::after {
   content: '';
   position: absolute;
-  top: 50%; left: 50%;
+  bottom: 4px;
+  left: 6px;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 4px var(--green);
+}
+
+/* The vinyl record itself, seen from the SIDE — a thin horizontal line
+   on top of the housing. Slight curvature at the ends suggests the disc
+   edge. The brighter "slot" in the middle is the spin indicator that
+   sweeps to show the record is turning. */
+.deck-vinyl {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background:
+    linear-gradient(180deg,
+      transparent 0%,
+      #2a2a35 30%,
+      #1a1a22 60%,
+      #0c0c12 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+  overflow: hidden;
+}
+/* The spin indicator — a thin highlight that sweeps along the disc edge */
+.deck-vinyl::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -20%;
+  width: 24px;
+  height: 100%;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255, 43, 214, 0.3) 40%,
+    rgba(255, 255, 255, 0.7) 50%,
+    rgba(255, 43, 214, 0.3) 60%,
+    transparent 100%);
+  animation: vinylSpin 1.4s linear infinite;
+}
+@keyframes vinylSpin {
+  from { transform: translateX(0); }
+  to   { transform: translateX(420%); }
+}
+
+/* Tonearm — a small angled stick rising from one corner of the housing */
+.tonearm {
+  position: absolute;
+  bottom: 6px;
+  width: 22px;
+  height: 18px;
+  pointer-events: none;
+}
+.tonearm-l { right: 0; }
+.tonearm-r { left: 0; }
+
+/* The vertical post */
+.tonearm-arm {
+  position: absolute;
+  bottom: 0;
+  width: 2px;
+  height: 14px;
+  background: linear-gradient(180deg, #999 0%, #555 100%);
+  border-radius: 1px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.6);
+}
+.tonearm-l .tonearm-arm { right: 4px; }
+.tonearm-r .tonearm-arm { left: 4px; }
+
+/* The horizontal arm with pivot + cartridge */
+.tonearm-pivot {
+  position: absolute;
+  top: 0;
+  width: 14px;
+  height: 2px;
+  background: linear-gradient(90deg, #777 0%, #ccc 50%, #555 100%);
+  border-radius: 1px;
+  transform-origin: right center;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.7);
+  animation: tonearmJiggle 4s ease-in-out infinite alternate;
+}
+.tonearm-l .tonearm-pivot { right: 4px; transform: rotate(-30deg); }
+.tonearm-r .tonearm-pivot { left: 4px; transform: rotate(30deg); transform-origin: left center; }
+@keyframes tonearmJiggle {
+  from { transform: rotate(-30deg); }
+  to   { transform: rotate(-26deg); }
+}
+.tonearm-r .tonearm-pivot { animation-name: tonearmJiggleR; }
+@keyframes tonearmJiggleR {
+  from { transform: rotate(30deg); }
+  to   { transform: rotate(26deg); }
+}
+
+.tonearm-tip {
+  position: absolute;
+  top: -1px;
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #000;
-  box-shadow: 0 0 3px rgba(0, 0, 0, 0.9);
-  transform: translate(-50%, -50%);
-  z-index: 2;
+  background: radial-gradient(circle at 30% 30%, #ccc, #333);
 }
-.deck-l { left: 18px; }
-.deck-r { right: 18px; }
-@keyframes deckSpin { to { transform: rotate(360deg); } }
+.tonearm-l .tonearm-tip { left: -2px; }
+.tonearm-r .tonearm-tip { right: -2px; }
 
-/* Tonearm — does NOT rotate with the deck */
-.tonearm {
-  position: absolute;
-  top: 6px;
-  width: 76px;
-  height: 76px;
-  pointer-events: none;
-}
-.tonearm-l { left: 12px; }
-.tonearm-r { right: 12px; }
-.tonearm::before {
-  /* the arm itself */
-  content: '';
-  position: absolute;
-  top: 8px;
-  right: 4px;
-  width: 36px;
-  height: 3px;
-  background: linear-gradient(90deg, #888 0%, #ccc 50%, #888 100%);
-  border-radius: 1.5px;
-  transform-origin: right center;
-  transform: rotate(-22deg);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
-  animation: tonearmJiggle 4s ease-in-out infinite alternate;
-}
-.tonearm::after {
-  /* the pivot / cartridge */
-  content: '';
+/* === MIXER — small console between the decks, viewed from front === */
+.mixer {
   position: absolute;
   top: 4px;
-  right: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 130px;
+  height: 28px;
+  background:
+    linear-gradient(180deg, #353540 0%, #1a1a22 50%, #0c0c12 100%);
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.mixer-knobs {
+  position: absolute;
+  top: 3px;
+  left: 4px;
+  right: 4px;
+  display: flex;
+  justify-content: space-around;
+  gap: 3px;
+}
+.mixer-knob {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #aaa, #333);
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
-}
-@keyframes tonearmJiggle {
-  from { transform: rotate(-22deg); }
-  to   { transform: rotate(-19deg); }
-}
-
-/* === MIXER — between the two decks === */
-.mixer {
-  position: absolute;
-  top: 8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 180px;
-  height: 64px;
-  background:
-    linear-gradient(180deg,
-      #2a2a35 0%,
-      #1a1a22 40%,
-      #0e0e14 100%);
-  border-radius: 4px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.6);
-}
-/* EQ knob row at the top of the mixer */
-.mixer-knobs {
-  position: absolute;
-  top: 6px;
-  left: 6px;
-  right: 6px;
-  display: flex;
-  justify-content: space-around;
-  gap: 4px;
-}
-.mixer-knob {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #aaa, #333);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  background: radial-gradient(circle at 30% 30%, #ddd, #333);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.6);
   position: relative;
 }
 .mixer-knob::after {
-  /* indicator notch on the knob */
   content: '';
   position: absolute;
-  top: 1.5px;
+  top: 0.5px;
   left: 50%;
-  width: 2px;
-  height: 4px;
+  width: 1.5px;
+  height: 3px;
   background: var(--cyan);
   border-radius: 1px;
-  box-shadow: 0 0 3px var(--cyan);
+  box-shadow: 0 0 2px var(--cyan);
   transform: translateX(-50%) rotate(var(--knob-rot, 0deg));
-  transform-origin: center 4px;
+  transform-origin: center 3px;
 }
 .mixer-knob:nth-child(1)::after { --knob-rot: -45deg; }
 .mixer-knob:nth-child(2)::after { --knob-rot: 0deg; }
@@ -365,65 +416,37 @@
 .mixer-knob:nth-child(5)::after { --knob-rot: 60deg; }
 .mixer-knob:nth-child(6)::after { --knob-rot: -10deg; }
 
-/* Crossfader at the bottom */
-.mixer-fader {
-  position: absolute;
-  bottom: 6px;
-  left: 8px;
-  right: 8px;
-  height: 14px;
-  background: linear-gradient(180deg, #0a0a0e 0%, #14141a 100%);
-  border-radius: 2px;
-  border: 1px solid rgba(0, 0, 0, 0.5);
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.8);
-}
-.mixer-fader::after {
-  content: '';
-  position: absolute;
-  top: -2px;
-  width: 18px;
-  height: 18px;
-  background: linear-gradient(180deg, #ddd 0%, #777 50%, #aaa 100%);
-  border-radius: 2px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
-  animation: faderSweep 6s ease-in-out infinite alternate;
-}
-@keyframes faderSweep {
-  0%, 100% { left: 10%; }
-  50%      { left: 70%; }
-}
-
-/* VU meter — bars between the fader and knobs */
 .mixer-vu {
   position: absolute;
-  top: 26px;
+  bottom: 3px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 2px;
-  height: 14px;
+  gap: 1.5px;
+  height: 12px;
   align-items: flex-end;
 }
 .mixer-vu span {
   display: block;
-  width: 4px;
-  background: linear-gradient(180deg, var(--green), var(--yellow), var(--pink));
+  width: 3px;
+  background: linear-gradient(180deg, var(--pink), var(--yellow), var(--green));
   border-radius: 1px;
   animation: vuPulse var(--beat-ms) ease-in-out infinite alternate;
+  transform-origin: bottom;
 }
-.mixer-vu span:nth-child(1) { height: 30%;  animation-delay: 0s; }
-.mixer-vu span:nth-child(2) { height: 60%;  animation-delay: 0.04s; }
-.mixer-vu span:nth-child(3) { height: 90%;  animation-delay: 0.08s; }
-.mixer-vu span:nth-child(4) { height: 50%;  animation-delay: 0.12s; }
-.mixer-vu span:nth-child(5) { height: 70%;  animation-delay: 0.16s; }
+.mixer-vu span:nth-child(1) { height: 40%; animation-delay: 0s; }
+.mixer-vu span:nth-child(2) { height: 70%; animation-delay: 0.04s; }
+.mixer-vu span:nth-child(3) { height: 90%; animation-delay: 0.08s; }
+.mixer-vu span:nth-child(4) { height: 60%; animation-delay: 0.12s; }
+.mixer-vu span:nth-child(5) { height: 80%; animation-delay: 0.16s; }
 @keyframes vuPulse {
-  from { transform: scaleY(0.4); transform-origin: bottom; }
-  to   { transform: scaleY(1);   transform-origin: bottom; }
+  from { transform: scaleY(0.35); }
+  to   { transform: scaleY(1); }
 }
 
 .dj-label {
   position: absolute;
-  top: -22px;
+  top: -26px;
   left: 50%;
   transform: translateX(-50%);
   font-family: inherit;
@@ -433,7 +456,7 @@
   color: var(--pink);
   text-shadow: 0 0 8px var(--pink);
   white-space: nowrap;
-  z-index: 3;
+  z-index: 6;
 }
 
 /* === SPEAKER STACKS — flank the DJ stage === */
@@ -952,33 +975,38 @@
   to   { opacity: 0.9; }
 }
 
-/* === Mobile === */
+/* === Responsive === */
 @media (max-width: 1100px) {
   .speaker.stack-l { left:  calc(50% - 160px); }
   .speaker.stack-r { right: calc(50% - 160px); }
-  .dj-stage { width: 220px; }
+  .dj-stage { width: 280px; }
   .bar { width: 200px; }
 }
 @media (max-width: 880px) {
-  .stage { height: 420px; }
-  .speaker { width: 46px; height: 100px; }
+  .stage { height: 460px; }
+  .speaker { width: 46px; height: 110px; }
   .speaker::before { width: 32px; height: 32px; }
   .speaker::after  { width: 22px; height: 22px; top: 56px; }
   .speaker.stack-l { left:  calc(50% - 130px); }
   .speaker.stack-r { right: calc(50% - 130px); }
-  .dj-stage { width: 180px; height: 72px; }
-  .dj-pult { width: 160px; height: 40px; }
-  .deck { width: 24px; height: 24px; top: 8px; }
-  .deck::after { width: 6px; height: 6px; }
-  .mixer { width: 60px; height: 22px; }
+  .dj-stage { width: 220px; height: 24px; }
+  .dj-pult { width: 280px; height: 140px; }
+  .deck { width: 70px; height: 22px; }
+  .deck-l { left: 10px; }
+  .deck-r { right: 10px; }
+  .mixer { width: 100px; height: 24px; }
+  .dj-pult-front::after { font-size: 16px; letter-spacing: 5px; }
   .bar { width: 170px; height: 200px; }
   .ball-wrap { width: 120px; height: 120px; }
 }
 @media (max-width: 720px) {
-  .stage { height: 360px; }
+  .stage { height: 400px; }
   .speaker { display: none; }
   .bar { width: 130px; }
   .ball-wrap { width: 96px; height: 96px; }
-  .dj-stage { width: 160px; height: 60px; }
-  .dj-pult { width: 140px; height: 32px; }
+  .dj-stage { width: 180px; height: 20px; }
+  .dj-pult { width: 230px; height: 120px; }
+  .deck { width: 56px; height: 20px; }
+  .mixer { width: 80px; height: 22px; }
+  .dj-pult-front::after { font-size: 13px; letter-spacing: 4px; }
 }
